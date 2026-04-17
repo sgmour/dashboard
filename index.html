@@ -1,5 +1,5 @@
 <!doctype html><html lang='el'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Morning Dashboard v7</title>
+<title>Morning Dashboard v8</title>
 <style>
 :root{--bg1:#1b3148;--bg2:#3a5670;--p:rgba(255,255,255,.12);--p2:rgba(255,255,255,.09);--b:rgba(255,255,255,.16);--t:#f5f1e8;--m:#d5dde6;--d:#afbcc8;--g:#d7b360;--gr:#73c996;--w:#f0be70;--r:#ec8484}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,Arial;color:var(--t);background:linear-gradient(180deg,var(--bg2),var(--bg1));padding:18px}
@@ -9,11 +9,12 @@
 .modebox{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 .tag{display:inline-block;padding:5px 10px;border-radius:999px;font-size:12px;border:1px solid var(--b);margin-top:6px}
 .tag.diag{color:#d4f8df}.tag.intv{color:#ffe8bf}.tag.block{color:#ffd9d9}
+.cons-ok{border-left:4px solid var(--gr)} .cons-warn{border-left:4px solid var(--w)} .cons-bad{border-left:4px solid var(--r)}
 @media(max-width:980px){.grid,.best,.slices{grid-template-columns:1fr}}
 h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;text-transform:uppercase}
 </style>
 <body><div class='wrap'>
-<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v7</div>
+<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v8</div>
 <div id='locs'></div><div class='small' id='locdesc'></div><div id='pris'></div><div class='small'>Προτεραιότητα ημέρας</div><div id='projs'></div><div class='small'>Project focus</div>
 <div class='modebox' id='modes'></div><div class='small'>W124 mode</div></div>
 
@@ -23,28 +24,28 @@ h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;te
 </div>
 
 <div class='grid'>
+<div class='card'><h3>Consistency Engine</h3><div class='list' id='consistency'></div></div>
 <div class='card'><h3>Confidence Meter</h3><div id='confidence'></div></div>
+</div>
+
+<div class='grid'>
 <div class='card'><h3>Alerts / Προσοχές</h3><div class='list' id='alerts'></div></div>
-</div>
-
-<div class='grid'>
 <div class='card'><h3>Προτεραιότητα & Project</h3><div class='list' id='pp'></div></div>
+</div>
+
+<div class='grid'>
 <div class='card'><h3>W124 Decision Matrix</h3><div class='list' id='w124'></div></div>
-</div>
-
-<div class='grid'>
 <div class='card'><h3>Καιρός τώρα</h3><div id='wx'>Φόρτωση...</div></div>
-<div class='card'><h3>3ήμερη πρόγνωση</h3><div id='fc'>Φόρτωση...</div></div>
 </div>
 
 <div class='grid'>
+<div class='card'><h3>3ήμερη πρόγνωση</h3><div id='fc'>Φόρτωση...</div></div>
 <div class='card'><h3>Radio</h3><div id='radio'></div></div>
-<div class='card'><h3>Notes</h3><div class='item'>Η v7 διακρίνει diagnosis mode και intervention mode. Το ίδιο W124 task μπορεί να αλλάζει ριζικά κατάταξη.</div></div>
 </div>
 
 </div>
 <script>
-const BUILD="v7 • diagnosis vs intervention";
+const BUILD="v8 • consistency engine";
 const LOC={ilioupoli:{label:"Ηλιούπολη",lat:37.9317,lon:23.7617,desc:"Βασική κατοικία",traffic:true,repeater:"145.625 MHz (SV1RVX)"},loutraki:{label:"Λουτράκι",lat:37.9756,lon:22.9847,desc:"Κορινθιακός Κόλπος",traffic:false,repeater:"145.600 MHz"},kerkyra:{label:"Κέρκυρα",lat:39.6243,lon:19.9217,desc:"Βόρειο Ιόνιο",traffic:false,repeater:"145.500 MHz (κλήση)"},xanthi:{label:"Ξάνθη",lat:41.1355,lon:24.8880,desc:"Βόρεια Ελλάδα",traffic:false,repeater:"145.575 MHz"}};
 const PRI=[["none","Καμία"],["gardening","Κηπουρική"],["work","Εργασία"],["radio","Radio"],["photo","Φωτογραφία"],["outdoor","Έξοδος"]];
 const PROJ=[["none","Κανένα"],["w124","W124 restoration"],["nas","NAS / network"],["uas","UAS / drone"],["content","Course / content creation"]];
@@ -89,21 +90,36 @@ function confidenceForTask(task, wind, uv, temp, mode){
   let c=70;
   c -= task.r*4;
   if(task.w){ if(wind>=30)c-=20; else if(wind>=20)c-=8; if(uv>=7)c-=12; else if(uv>=4)c-=5; if(temp>=33 || temp<=5)c-=10; }
-  if(mode==="diagnosis"){
-    if(task.typ==="diagnosis") c+=14;
-    if(task.typ==="diagnosis_execution") c-=8;
-    if(task.k==="obd1") c+=6;
-  }else{
-    if(task.typ==="maintenance") c+=6;
-    if(task.typ==="diagnosis") c-=12;
-    if(task.typ==="diagnosis_execution") c-=2;
-    if(task.m>=100) c-=5;
-  }
+  if(mode==="diagnosis"){ if(task.typ==="diagnosis") c+=14; if(task.typ==="diagnosis_execution") c-=8; if(task.k==="obd1") c+=6; }
+  else { if(task.typ==="maintenance") c+=6; if(task.typ==="diagnosis") c-=12; if(task.typ==="diagnosis_execution") c-=2; if(task.m>=100) c-=5; }
   c = Math.max(5, Math.min(95, c));
   let label="Medium", cls="medium", advice="Προχώρα με έλεγχο.";
   if(c>=72){label="High"; cls="high"; advice="Προχώρα — οι συνθήκες είναι αρκετά καλές.";}
   else if(c<45){label="Low"; cls="low"; advice="Μην κάνεις intervention σήμερα αν δεν υπάρχει σοβαρός λόγος.";}
   return {value:c,label,cls,advice};
+}
+function consistencyAnalysis(){
+  const msgs=[];
+  if(proj==="w124" && pri!=="work" && pri!=="none"){
+    msgs.push({cls:"cons-warn", text:`Το project είναι W124 αλλά η γενική προτεραιότητα είναι ${PRI.find(x=>x[0]===pri)?.[1]}. Αυτό είναι αποδεκτό, αλλά μειώνει την καθαρότητα της ημέρας.`});
+  }
+  if(proj!=="w124" && wmode==="intervention"){
+    msgs.push({cls:"cons-warn", text:"Το W124 intervention mode είναι ενεργό χωρίς W124 project focus. Δεν είναι λάθος, αλλά είναι άσχετο context."});
+  }
+  if(proj!=="w124" && wmode==="diagnosis"){
+    msgs.push({cls:"cons-ok", text:"Το W124 mode μένει ανενεργό ουσιαστικά όσο το project focus δεν είναι W124. Άρα δεν επηρεάζει λάθος το υπόλοιπο dashboard."});
+  }
+  if(proj==="w124" && pri==="work"){
+    msgs.push({cls:"cons-ok", text:"W124 + Εργασία είναι συνεπές setup. Το dashboard αντιμετωπίζει το W124 ως structured work, όχι ως τυχαίο hobby."});
+  }
+  if(proj==="uas" && wmode!=="diagnosis"){
+    msgs.push({cls:"cons-warn", text:"Το project είναι UAS αλλά ο W124 mode selector παραμένει σε intervention. Το dashboard το αγνοεί, αλλά το UI σε αφήνει να έχεις θόρυβο context."});
+  }
+  if(proj==="none" && pri==="none"){
+    msgs.push({cls:"cons-bad", text:"Δεν υπάρχει ούτε προτεραιότητα ούτε project focus. Το dashboard μένει χρήσιμο, αλλά η απόφαση θα παραμείνει γενική."});
+  }
+  if(msgs.length===0) msgs.push({cls:"cons-ok", text:"Δεν εντοπίστηκε ουσιαστική αντίφαση ανάμεσα σε priority, project focus και W124 mode."});
+  return msgs;
 }
 function renderButtons(){
  let L=document.getElementById('locs'),P=document.getElementById('pris'),R=document.getElementById('projs'),M=document.getElementById('modes');L.innerHTML='';P.innerHTML='';R.innerHTML='';M.innerHTML='';
@@ -170,13 +186,7 @@ function update(){
    best.unshift([`W124 top task (${wmode})`,top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);
    summary+=` Για το W124 (${wmode}), το πιο λογικό task σήμερα είναι: ${top.t}.`;
    document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span><br>${modeTag(t,wmode)}</div>`).join('');
-   document.getElementById('confidence').innerHTML = `
-     <div class='meter'>
-       <div><strong>Top task:</strong> ${top.t}</div>
-       <div class='small'>Mode: ${wmode} • Confidence: <span class='conf-${conf.cls}'>${conf.label}</span> (${conf.value}/100)</div>
-       <div class='bar'><div class='fill ${conf.cls}' style='width:${conf.value}%'></div></div>
-       <div class='small' style='margin-top:8px'>${conf.advice}</div>
-     </div>`;
+   document.getElementById('confidence').innerHTML = `<div class='meter'><div><strong>Top task:</strong> ${top.t}</div><div class='small'>Mode: ${wmode} • Confidence: <span class='conf-${conf.cls}'>${conf.label}</span> (${conf.value}/100)</div><div class='bar'><div class='fill ${conf.cls}' style='width:${conf.value}%'></div></div><div class='small' style='margin-top:8px'>${conf.advice}</div></div>`;
  } else {
    document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";
    document.getElementById('confidence').innerHTML = "<div class='meter'><div><strong>Confidence Meter</strong></div><div class='small'>Ενεργοποιείται πιο ουσιαστικά όταν υπάρχει συγκεκριμένο project focus, π.χ. W124 restoration.</div></div>";
@@ -187,6 +197,8 @@ function update(){
  if(conf) pp.push(`Task confidence: ${conf.label} (${conf.value}/100).`);
  if(uv>=7)alerts.push(alertBox("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.","alertH")); else if(uv>=4)alerts.push(alertBox("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.","alertM")); else alerts.push(alertBox("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.","alertL"));
  if(wind>=35)alerts.push(alertBox("Δυνατός άνεμος — κράτα πίσω δραστηριότητες που θέλουν σταθερότητα.","alertH")); else if(wind>=20)alerts.push(alertBox("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.","alertM")); else alerts.push(alertBox("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.","alertL"));
+ let cons = consistencyAnalysis();
+ document.getElementById('consistency').innerHTML = cons.map(x=>`<div class='item ${x.cls}'>${x.text}</div>`).join('');
  let nowtxt=sl==='morning'?"Αυτή τη στιγμή ταιριάζει περισσότερο οργανωμένο πρωινό block, όχι διάσπαση.":sl==='midday'?(uv>=6?"Αυτή τη στιγμή είναι προτιμότερο να μείνεις σε εσωτερική ή ελεγχόμενη δραστηριότητα και να κρατήσεις την έξοδο για αργότερα.":"Αυτή τη στιγμή μπορείς να κάνεις σύντομη, ελεγχόμενη κίνηση, όχι όμως άσκοπη διασπορά."):`Αυτή τη στιγμή το παράθυρο πλησιάζει προς την πιο χρήσιμη απογευματινή φάση, ειδικά κοντά στις ${s.gold}.`;
  if(proj==='w124'){let top=scoreW124(wind,uv,temp,wmode)[0]; nowtxt += ` Προσωρινή καλύτερη πρόταση για το W124 (${wmode}): ${top.t}.`; if(conf) nowtxt += ` Confidence: ${conf.label}.`; }
  if(wx._fallback) nowtxt += " Ο καιρός δεν φορτώθηκε live, αλλά η λογική συνεχίζει με fallback.";
