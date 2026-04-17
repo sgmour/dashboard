@@ -1,19 +1,21 @@
 <!doctype html><html lang='el'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Morning Dashboard v6</title>
+<title>Morning Dashboard v7</title>
 <style>
 :root{--bg1:#1b3148;--bg2:#3a5670;--p:rgba(255,255,255,.12);--p2:rgba(255,255,255,.09);--b:rgba(255,255,255,.16);--t:#f5f1e8;--m:#d5dde6;--d:#afbcc8;--g:#d7b360;--gr:#73c996;--w:#f0be70;--r:#ec8484}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,Arial;color:var(--t);background:linear-gradient(180deg,var(--bg2),var(--bg1));padding:18px}
-.wrap{max-width:1260px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--p);border:1px solid var(--b);border-radius:22px;padding:16px;margin:0 0 16px}.list{display:flex;flex-direction:column;gap:10px}.item{background:var(--p2);border-radius:14px;padding:12px 14px;line-height:1.35}.pill{padding:8px 12px;border-radius:999px;border:1px solid var(--b);background:rgba(0,0,0,.12);color:var(--m);display:inline-block;margin:4px;cursor:pointer}.active{background:rgba(215,179,96,.18);color:#fff1cc}.head{text-align:center}.sum{max-width:920px;margin:0 auto 14px;padding:13px 16px;border-radius:16px;background:rgba(255,221,136,.10);border:1px solid rgba(215,179,96,.38);color:#f8e8bd}.best{display:grid;grid-template-columns:1fr 1fr;gap:10px}.best>div,.slice>div,.stat,.meter{background:var(--p2);border-radius:14px;padding:12px}.small{color:var(--d);font-size:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}.row:last-child{border-bottom:none}.right{text-align:right}.alertH{border-left:4px solid var(--r)}.alertM{border-left:4px solid var(--w)}.alertL{border-left:4px solid var(--gr)}.slices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.ver{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(215,179,96,.38);background:rgba(255,221,136,.08);color:#f8e8bd}.ok{color:#d4f8df}.info{color:#e9e2bf}
-.bar{height:12px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:8px}
-.fill{height:100%;border-radius:999px}
-.fill.high{background:var(--gr)} .fill.medium{background:var(--w)} .fill.low{background:var(--r)}
+.wrap{max-width:1280px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--p);border:1px solid var(--b);border-radius:22px;padding:16px;margin:0 0 16px}.list{display:flex;flex-direction:column;gap:10px}.item{background:var(--p2);border-radius:14px;padding:12px 14px;line-height:1.35}.pill{padding:8px 12px;border-radius:999px;border:1px solid var(--b);background:rgba(0,0,0,.12);color:var(--m);display:inline-block;margin:4px;cursor:pointer}.active{background:rgba(215,179,96,.18);color:#fff1cc}.head{text-align:center}.sum{max-width:920px;margin:0 auto 14px;padding:13px 16px;border-radius:16px;background:rgba(255,221,136,.10);border:1px solid rgba(215,179,96,.38);color:#f8e8bd}.best{display:grid;grid-template-columns:1fr 1fr;gap:10px}.best>div,.slice>div,.stat,.meter{background:var(--p2);border-radius:14px;padding:12px}.small{color:var(--d);font-size:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}.row:last-child{border-bottom:none}.right{text-align:right}.alertH{border-left:4px solid var(--r)}.alertM{border-left:4px solid var(--w)}.alertL{border-left:4px solid var(--gr)}.slices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.ver{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(215,179,96,.38);background:rgba(255,221,136,.08);color:#f8e8bd}.ok{color:#d4f8df}.info{color:#e9e2bf}
+.bar{height:12px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:8px}.fill{height:100%;border-radius:999px}.fill.high{background:var(--gr)} .fill.medium{background:var(--w)} .fill.low{background:var(--r)}
 .conf-high{color:#d4f8df}.conf-medium{color:#ffe8bf}.conf-low{color:#ffd9d9}
+.modebox{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.tag{display:inline-block;padding:5px 10px;border-radius:999px;font-size:12px;border:1px solid var(--b);margin-top:6px}
+.tag.diag{color:#d4f8df}.tag.intv{color:#ffe8bf}.tag.block{color:#ffd9d9}
 @media(max-width:980px){.grid,.best,.slices{grid-template-columns:1fr}}
 h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;text-transform:uppercase}
 </style>
 <body><div class='wrap'>
-<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v6</div>
-<div id='locs'></div><div class='small' id='locdesc'></div><div id='pris'></div><div class='small'>Προτεραιότητα ημέρας</div><div id='projs'></div><div class='small'>Project focus</div></div>
+<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v7</div>
+<div id='locs'></div><div class='small' id='locdesc'></div><div id='pris'></div><div class='small'>Προτεραιότητα ημέρας</div><div id='projs'></div><div class='small'>Project focus</div>
+<div class='modebox' id='modes'></div><div class='small'>W124 mode</div></div>
 
 <div class='grid'>
 <div class='card'><h3>Action Block — Τώρα</h3><div class='item' id='now'>Φόρτωση...</div><h3 style='margin-top:14px'>Τι να κάνεις σήμερα</h3><div class='list' id='dec'></div></div>
@@ -37,15 +39,16 @@ h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;te
 
 <div class='grid'>
 <div class='card'><h3>Radio</h3><div id='radio'></div></div>
-<div class='card'><h3>Notes</h3><div class='item' id='notes'>v6 προσθέτει confidence logic πάνω από την πρόταση task.</div></div>
+<div class='card'><h3>Notes</h3><div class='item'>Η v7 διακρίνει diagnosis mode και intervention mode. Το ίδιο W124 task μπορεί να αλλάζει ριζικά κατάταξη.</div></div>
 </div>
 
 </div>
 <script>
-const BUILD="v6 • confidence meter";
+const BUILD="v7 • diagnosis vs intervention";
 const LOC={ilioupoli:{label:"Ηλιούπολη",lat:37.9317,lon:23.7617,desc:"Βασική κατοικία",traffic:true,repeater:"145.625 MHz (SV1RVX)"},loutraki:{label:"Λουτράκι",lat:37.9756,lon:22.9847,desc:"Κορινθιακός Κόλπος",traffic:false,repeater:"145.600 MHz"},kerkyra:{label:"Κέρκυρα",lat:39.6243,lon:19.9217,desc:"Βόρειο Ιόνιο",traffic:false,repeater:"145.500 MHz (κλήση)"},xanthi:{label:"Ξάνθη",lat:41.1355,lon:24.8880,desc:"Βόρεια Ελλάδα",traffic:false,repeater:"145.575 MHz"}};
 const PRI=[["none","Καμία"],["gardening","Κηπουρική"],["work","Εργασία"],["radio","Radio"],["photo","Φωτογραφία"],["outdoor","Έξοδος"]];
 const PROJ=[["none","Κανένα"],["w124","W124 restoration"],["nas","NAS / network"],["uas","UAS / drone"],["content","Course / content creation"]];
+const MODES=[["diagnosis","Diagnosis mode"],["intervention","Intervention mode"]];
 const W124=[
 {k:"fluids",t:"Πλύσιμο, έλεγχος & συμπλήρωση υγρών",m:40,i:7,r:3,w:true,typ:"maintenance",n:"Χαμηλότερου ρίσκου, καλό για πρακτική πρόοδο."},
 {k:"electrics",t:"Έλεγχος ηλεκτρικού συστήματος",m:90,i:8,r:7,w:true,typ:"diagnosis_execution",n:"Θέλει ήσυχο χρόνο και καθαρό μυαλό."},
@@ -55,27 +58,47 @@ const W124=[
 ];
 const ICON={0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",95:"⛈️",96:"⛈️",99:"⛈️"};
 const CODE={0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"};
-let loc=localStorage.getItem('md_location')||'ilioupoli', pri=localStorage.getItem('md_priority')||'none', proj=localStorage.getItem('md_project')||'none', wx=null;
+let loc=localStorage.getItem('md_location')||'ilioupoli', pri=localStorage.getItem('md_priority')||'none', proj=localStorage.getItem('md_project')||'none', wmode=localStorage.getItem('md_w124_mode')||'diagnosis', wx=null;
 function safeWx(){return {current:{temperature_2m:21,weather_code:2,wind_speed_10m:12,uv_index:2.0,relative_humidity_2m:45},daily:{time:[new Date().toISOString().slice(0,10),new Date(Date.now()+86400000).toISOString().slice(0,10),new Date(Date.now()+2*86400000).toISOString().slice(0,10)],temperature_2m_max:[22,21,20],temperature_2m_min:[15,12,12],weather_code:[61,2,1]},_fallback:true,_fallback_msg:"Χρησιμοποιούνται προσωρινά ασφαλή δεδομένα επειδή ο καιρός δεν φορτώθηκε."}}
 function sun(lat,lon,d){const rad=Math.PI/180;const n=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const B=(360/365)*(n-81)*rad;const ET=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);const tz=2,lstm=15*tz,tc=4*(lon-lstm)+ET,decl=23.45*Math.sin(B)*rad,latR=lat*rad,cosH=-Math.tan(latR)*Math.tan(decl),H=Math.acos(Math.max(-1,Math.min(1,cosH)))/rad;const sr=12-H/15-tc/60,ss=12+H/15+(-tc/60),f=h=>`${String(Math.floor(h)).padStart(2,"0")}:${String(Math.round((h-Math.floor(h))*60)).padStart(2,"0")}`;return{rise:f(sr),set:f(ss),gold:f(ss-1)}}
 function slice(){let h=new Date().getHours();if(h<12)return"morning";if(h<17)return"midday";return"evening"}
-function scoreW124(wind,uv,temp){
+function scoreW124(wind,uv,temp,mode){
   return W124.map(t=>{
     let s=t.i*10-t.r*3;
-    if(t.w){if(wind>=30)s-=20;if(uv>=7)s-=14;if(temp>=33)s-=12;if(temp<=5)s-=15}
-    if(t.m<=40)s+=8;if(t.m>=100)s-=5;
-    if(t.typ==="diagnosis")s+=10;if(t.typ==="diagnosis_execution")s-=3;
-    if(t.k==="obd1")s+=6;if(t.k==="hvac")s-=6;
+    if(t.w){if(wind>=30)s-=20; if(wind>=20)s-=8; if(uv>=7)s-=14; if(temp>=33)s-=12; if(temp<=5)s-=15}
+    if(t.m<=40)s+=8; if(t.m>=100)s-=5;
+    if(mode==="diagnosis"){
+      if(t.typ==="diagnosis") s+=18;
+      if(t.typ==="diagnosis_execution") s-=8;
+      if(t.k==="obd1") s+=10;
+      if(t.k==="hvac") s-=10;
+      if(t.k==="electrics") s-=2;
+    }else{
+      if(t.typ==="diagnosis") s-=14;
+      if(t.typ==="maintenance") s+=10;
+      if(t.typ==="diagnosis_execution") s+=6;
+      if(t.k==="obd1") s-=10;
+      if(t.k==="oils") s+=8;
+      if(t.k==="fluids") s+=6;
+      if(t.k==="hvac") s+=2;
+    }
     return {...t,s}
   }).sort((a,b)=>b.s-a.s)
 }
-function confidenceForTask(task, wind, uv, temp){
+function confidenceForTask(task, wind, uv, temp, mode){
   let c=70;
   c -= task.r*4;
   if(task.w){ if(wind>=30)c-=20; else if(wind>=20)c-=8; if(uv>=7)c-=12; else if(uv>=4)c-=5; if(temp>=33 || temp<=5)c-=10; }
-  if(task.typ==="diagnosis") c+=12;
-  if(task.typ==="diagnosis_execution") c-=8;
-  if(task.m>=100) c-=6;
+  if(mode==="diagnosis"){
+    if(task.typ==="diagnosis") c+=14;
+    if(task.typ==="diagnosis_execution") c-=8;
+    if(task.k==="obd1") c+=6;
+  }else{
+    if(task.typ==="maintenance") c+=6;
+    if(task.typ==="diagnosis") c-=12;
+    if(task.typ==="diagnosis_execution") c-=2;
+    if(task.m>=100) c-=5;
+  }
   c = Math.max(5, Math.min(95, c));
   let label="Medium", cls="medium", advice="Προχώρα με έλεγχο.";
   if(c>=72){label="High"; cls="high"; advice="Προχώρα — οι συνθήκες είναι αρκετά καλές.";}
@@ -83,10 +106,11 @@ function confidenceForTask(task, wind, uv, temp){
   return {value:c,label,cls,advice};
 }
 function renderButtons(){
- let L=document.getElementById('locs'),P=document.getElementById('pris'),R=document.getElementById('projs');L.innerHTML='';P.innerHTML='';R.innerHTML='';
+ let L=document.getElementById('locs'),P=document.getElementById('pris'),R=document.getElementById('projs'),M=document.getElementById('modes');L.innerHTML='';P.innerHTML='';R.innerHTML='';M.innerHTML='';
  Object.entries(LOC).forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===loc?' active':'');b.textContent=v.label;b.onclick=()=>{loc=k;localStorage.setItem('md_location',k);renderButtons();fetchWx()};L.appendChild(b)});
  PRI.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===pri?' active':'');b.textContent=v;b.onclick=()=>{pri=k;localStorage.setItem('md_priority',k);renderButtons();update()};P.appendChild(b)});
  PROJ.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===proj?' active':'');b.textContent=v;b.onclick=()=>{proj=k;localStorage.setItem('md_project',k);renderButtons();update()};R.appendChild(b)});
+ MODES.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===wmode?' active':'');b.textContent=v;b.onclick=()=>{wmode=k;localStorage.setItem('md_w124_mode',k);renderButtons();update()};M.appendChild(b)});
  document.getElementById('locdesc').textContent=LOC[loc].desc;
  document.getElementById('versionBadge').textContent=`Version ${BUILD}`;
 }
@@ -102,11 +126,7 @@ async function fetchWx(){
    renderWx();
    update();
  }catch(e){
-   try{
-     const cached = localStorage.getItem('md_last_wx');
-     if(cached){ wx=JSON.parse(cached); wx._fallback=true; wx._fallback_msg="Χρησιμοποιούνται τα τελευταία αποθηκευμένα δεδομένα καιρού."; }
-     else wx=safeWx();
-   }catch(_){ wx=safeWx(); }
+   try{const cached = localStorage.getItem('md_last_wx'); if(cached){ wx=JSON.parse(cached); wx._fallback=true; wx._fallback_msg="Χρησιμοποιούνται τα τελευταία αποθηκευμένα δεδομένα καιρού."; } else wx=safeWx();}catch(_){ wx=safeWx(); }
    renderWx(); update();
  }
 }
@@ -120,6 +140,17 @@ function renderWx(){
  document.getElementById('radio').innerHTML=`<div class='row'><div>Τοπικός repeater</div><div class='right'>${LOC[loc].repeater}</div></div><div class='row'><div>Κλήση FM (2m)</div><div class='right'>145.500 MHz</div></div><div class='row'><div>Κλήση SSB (2m)</div><div class='right'>144.300 MHz</div></div>`;
 }
 function alertBox(text,cls){return `<div class='item ${cls}'>${text}</div>`}
+function modeTag(task, mode){
+  if(mode==="diagnosis"){
+    if(task.typ==="diagnosis") return "<span class='tag diag'>Ιδανικό για diagnosis</span>";
+    if(task.typ==="diagnosis_execution") return "<span class='tag intv'>Θέλει προσοχή στο diagnosis mode</span>";
+    return "<span class='tag block'>Όχι κύριο diagnosis task</span>";
+  }else{
+    if(task.typ==="maintenance") return "<span class='tag diag'>Κατάλληλο για intervention day</span>";
+    if(task.typ==="diagnosis_execution") return "<span class='tag intv'>Μπορεί να γίνει με έλεγχο</span>";
+    return "<span class='tag block'>Υποχωρεί στο intervention mode</span>";
+  }
+}
 function update(){
  if(!wx)return;
  let c=wx.current,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),sl=slice();
@@ -133,31 +164,31 @@ function update(){
  else {dec.push("Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός.");dec.push(`Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${s.gold}.`);best=[["Εργασία",work,"Για καθαρή πρωινή συγκέντρωση."],["Έξοδος",outdoor,"Για ήπια πρακτική χρήση."],["Φωτογραφία",photo,"Για καλύτερο φως."],["Κηπουρική",garden,"Αν τελικά κινηθείς έξω."]];summary+="η μέρα είναι ισορροπημένη.";}
  let conf = null;
  if(proj==='w124'){
-   let scored=scoreW124(wind,uv,temp),top=scored[0];
-   conf = confidenceForTask(top, wind, uv, temp);
-   dec.unshift(`W124 priority candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση τις σημερινές συνθήκες.`);
-   best.unshift(["W124 top task",top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);
-   summary+=` Για το W124, το πιο λογικό task σήμερα είναι: ${top.t}.`;
-   document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span></div>`).join('');
+   let scored=scoreW124(wind,uv,temp,wmode),top=scored[0];
+   conf = confidenceForTask(top, wind, uv, temp, wmode);
+   dec.unshift(`W124 ${wmode} candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση το επιλεγμένο mode και τις σημερινές συνθήκες.`);
+   best.unshift([`W124 top task (${wmode})`,top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);
+   summary+=` Για το W124 (${wmode}), το πιο λογικό task σήμερα είναι: ${top.t}.`;
+   document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span><br>${modeTag(t,wmode)}</div>`).join('');
    document.getElementById('confidence').innerHTML = `
      <div class='meter'>
        <div><strong>Top task:</strong> ${top.t}</div>
-       <div class='small'>Confidence: <span class='conf-${conf.cls}'>${conf.label}</span> (${conf.value}/100)</div>
+       <div class='small'>Mode: ${wmode} • Confidence: <span class='conf-${conf.cls}'>${conf.label}</span> (${conf.value}/100)</div>
        <div class='bar'><div class='fill ${conf.cls}' style='width:${conf.value}%'></div></div>
        <div class='small' style='margin-top:8px'>${conf.advice}</div>
-     </div>
-   `;
+     </div>`;
  } else {
    document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";
    document.getElementById('confidence').innerHTML = "<div class='meter'><div><strong>Confidence Meter</strong></div><div class='small'>Ενεργοποιείται πιο ουσιαστικά όταν υπάρχει συγκεκριμένο project focus, π.χ. W124 restoration.</div></div>";
  }
  pp.push(`Προτεραιότητα: ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"}.`);pp.push(`Project focus: ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"}.`);
+ if(proj==='w124') pp.push(`W124 mode: ${wmode}.`);
  if(wx._fallback) pp.push("Weather mode: fallback ενεργό.");
  if(conf) pp.push(`Task confidence: ${conf.label} (${conf.value}/100).`);
  if(uv>=7)alerts.push(alertBox("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.","alertH")); else if(uv>=4)alerts.push(alertBox("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.","alertM")); else alerts.push(alertBox("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.","alertL"));
  if(wind>=35)alerts.push(alertBox("Δυνατός άνεμος — κράτα πίσω δραστηριότητες που θέλουν σταθερότητα.","alertH")); else if(wind>=20)alerts.push(alertBox("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.","alertM")); else alerts.push(alertBox("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.","alertL"));
  let nowtxt=sl==='morning'?"Αυτή τη στιγμή ταιριάζει περισσότερο οργανωμένο πρωινό block, όχι διάσπαση.":sl==='midday'?(uv>=6?"Αυτή τη στιγμή είναι προτιμότερο να μείνεις σε εσωτερική ή ελεγχόμενη δραστηριότητα και να κρατήσεις την έξοδο για αργότερα.":"Αυτή τη στιγμή μπορείς να κάνεις σύντομη, ελεγχόμενη κίνηση, όχι όμως άσκοπη διασπορά."):`Αυτή τη στιγμή το παράθυρο πλησιάζει προς την πιο χρήσιμη απογευματινή φάση, ειδικά κοντά στις ${s.gold}.`;
- if(proj==='w124'){let top=scoreW124(wind,uv,temp)[0]; nowtxt += ` Προσωρινή καλύτερη πρόταση για το W124: ${top.t}.`; if(conf) nowtxt += ` Confidence: ${conf.label}.`; }
+ if(proj==='w124'){let top=scoreW124(wind,uv,temp,wmode)[0]; nowtxt += ` Προσωρινή καλύτερη πρόταση για το W124 (${wmode}): ${top.t}.`; if(conf) nowtxt += ` Confidence: ${conf.label}.`; }
  if(wx._fallback) nowtxt += " Ο καιρός δεν φορτώθηκε live, αλλά η λογική συνεχίζει με fallback.";
  document.getElementById('now').textContent=nowtxt;
  document.getElementById('dec').innerHTML=dec.map(x=>`<div class='item'>${x}</div>`).join('');
