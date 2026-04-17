@@ -3,70 +3,77 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Morning Dashboard v2 Full</title>
+<title>Morning Dashboard v3 Full</title>
 <style>
   :root{
-    --bg1:#152235;
-    --bg2:#24384d;
-    --panel:rgba(255,255,255,0.10);
-    --panel-2:rgba(255,255,255,0.08);
-    --border:rgba(255,255,255,0.14);
-    --text:#f3efe4;
-    --muted:#c6ced7;
-    --dim:#9aabbc;
-    --gold:#d6b15c;
-    --blue:#84b7ff;
-    --green:#65c18c;
-    --warn:#f0b35c;
-    --danger:#ee7b7b;
-    --shadow:0 12px 32px rgba(0,0,0,0.22);
+    --bg1:#19304a;
+    --bg2:#35506a;
+    --glow1:rgba(255,223,145,.11);
+    --glow2:rgba(126,177,255,.13);
+    --panel:rgba(255,255,255,0.12);
+    --panel2:rgba(255,255,255,0.09);
+    --panel3:rgba(255,255,255,0.07);
+    --border:rgba(255,255,255,0.16);
+    --text:#f5f1e8;
+    --muted:#d5dde6;
+    --dim:#afbcc8;
+    --gold:#d7b360;
+    --green:#73c996;
+    --warn:#f0be70;
+    --danger:#ec8484;
+    --shadow:0 12px 34px rgba(0,0,0,.22);
   }
   *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
   body{
-    margin:0;
     min-height:100vh;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     color:var(--text);
     background:
-      radial-gradient(circle at 15% 20%, rgba(255,215,120,.10), transparent 32%),
-      radial-gradient(circle at 82% 18%, rgba(120,180,255,.12), transparent 26%),
-      linear-gradient(180deg,var(--bg2),var(--bg1) 56%, #122033);
+      radial-gradient(circle at 16% 16%, var(--glow1), transparent 30%),
+      radial-gradient(circle at 86% 14%, var(--glow2), transparent 26%),
+      linear-gradient(180deg, var(--bg2), var(--bg1) 58%, #182b42);
   }
-  .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 42px}
-  .header{text-align:center;margin-bottom:16px}
+  .wrap{max-width:1220px;margin:0 auto;padding:22px 18px 44px}
+  .header{text-align:center;margin-bottom:14px}
   .eyebrow{
-    color:var(--gold); letter-spacing:.35em; font-size:12px; text-transform:uppercase;
-    margin-bottom:10px; opacity:.95;
+    color:var(--gold); letter-spacing:.34em; text-transform:uppercase;
+    font-size:12px; margin-bottom:10px;
   }
   .date{
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(30px,5vw,54px); font-weight:700; line-height:1.05;
-    color:#f8f1dd; margin-bottom:8px;
+    font-size:clamp(30px,5vw,56px);
+    line-height:1.05; font-weight:700; color:#f7efdb; margin-bottom:8px;
   }
-  .time{font-size:clamp(22px,3vw,34px); color:var(--gold); font-weight:700; margin-bottom:12px}
+  .time{
+    color:var(--gold); font-size:clamp(24px,3vw,34px); font-weight:800; margin-bottom:12px;
+  }
   .summary{
-    max-width:860px; margin:0 auto 16px; background:rgba(255,215,120,.10);
-    border:1px solid rgba(214,177,92,.38); border-radius:16px; padding:12px 16px;
-    color:#f5e8c5; font-size:18px; box-shadow:var(--shadow);
+    max-width:900px; margin:0 auto 14px;
+    padding:13px 16px; border-radius:16px;
+    background:rgba(255,221,136,.10);
+    border:1px solid rgba(215,179,96,.38);
+    color:#f8e8bd; font-size:18px; box-shadow:var(--shadow);
   }
-
-  .location-buttons, .priority-buttons{
-    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:14px 0 6px;
+  .location-buttons,.priority-buttons{
+    display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin:12px 0 6px;
   }
   .pill{
-    border:1px solid var(--border); color:var(--muted); background:rgba(0,0,0,.12);
-    border-radius:999px; padding:10px 18px; font-size:16px; cursor:pointer;
-    transition:.2s ease; backdrop-filter: blur(8px);
+    padding:10px 18px; border-radius:999px; border:1px solid var(--border);
+    background:rgba(0,0,0,.12); color:var(--muted); cursor:pointer; font-size:16px;
+    transition:.18s ease; backdrop-filter: blur(8px);
   }
   .pill.active{
-    color:#fff4d6; border-color:rgba(214,177,92,.75);
-    background:rgba(214,177,92,.18); box-shadow:0 0 0 1px rgba(214,177,92,.18) inset;
+    background:rgba(215,179,96,.18);
+    border-color:rgba(215,179,96,.75);
+    color:#fff1cc;
   }
-  .subnote{text-align:center; color:var(--dim); letter-spacing:.20em; text-transform:uppercase; font-size:12px; margin-bottom:18px}
+  .subnote{
+    text-align:center; color:var(--dim); font-size:12px;
+    letter-spacing:.22em; text-transform:uppercase; margin-bottom:16px;
+  }
 
-  .grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;
-  }
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px}
   .card{
     background:var(--panel);
     border:1px solid var(--border);
@@ -74,90 +81,98 @@
     box-shadow:var(--shadow); backdrop-filter: blur(10px);
   }
   .card h3{
-    margin:0 0 14px; font-size:13px; letter-spacing:.28em; text-transform:uppercase;
-    color:var(--gold); font-weight:700;
+    margin:0 0 14px; color:var(--gold);
+    font-size:13px; letter-spacing:.28em; text-transform:uppercase; font-weight:800;
   }
-  .big-temp{font-size:58px; font-weight:800; line-height:1}
+
+  .decision-card{background:rgba(255,255,255,.13)}
+  .decision-list{display:flex; flex-direction:column; gap:10px}
+  .decision-item{
+    padding:12px 14px; border-radius:14px; background:var(--panel2); font-size:19px; line-height:1.35;
+  }
+
+  .best-window{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  .best-item{
+    background:var(--panel2); border-radius:14px; padding:12px 14px;
+  }
+  .best-item .label{
+    color:var(--dim); font-size:12px; text-transform:uppercase; letter-spacing:.14em; margin-bottom:6px;
+  }
+  .best-item .value{font-size:22px; font-weight:800}
+  .best-item .note{font-size:14px; color:var(--muted); margin-top:6px; line-height:1.35}
+
+  .alert-high,.alert-medium,.alert-low{
+    border-left:4px solid transparent;
+  }
+  .alert-high{border-left-color:var(--danger)}
+  .alert-medium{border-left-color:var(--warn)}
+  .alert-low{border-left-color:var(--green)}
+
   .weather-top{display:flex; align-items:center; gap:16px; margin-bottom:12px}
-  .weather-icon{font-size:54px; width:58px; text-align:center}
-  .wdesc{color:var(--muted); font-size:18px}
+  .weather-icon{font-size:56px; width:60px; text-align:center}
+  .big-temp{font-size:60px; line-height:1; font-weight:800}
+  .wdesc{font-size:18px; color:var(--muted)}
   .stats-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-  .stat{
-    background:var(--panel-2); border-radius:14px; padding:12px 12px 10px; min-height:72px;
-  }
-  .stat .label{font-size:12px; color:var(--dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:5px}
-  .stat .value{font-size:24px; font-weight:700}
-  .smallline{margin-top:10px; color:var(--muted); font-size:18px}
+  .stat{background:var(--panel3); border-radius:14px; padding:12px}
+  .stat .label{font-size:12px; color:var(--dim); letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px}
+  .stat .value{font-size:22px; font-weight:700}
+  .smallline{margin-top:10px; font-size:18px; color:var(--muted)}
   .tag{
-    display:inline-block; padding:8px 12px; border-radius:999px; font-size:15px; font-weight:600;
-    margin-top:12px;
+    display:inline-block; margin-top:12px; padding:8px 12px; border-radius:999px; font-size:15px; font-weight:700;
+    border:1px solid transparent;
   }
-  .tag.green{background:rgba(101,193,140,.18); color:#caf4d7; border:1px solid rgba(101,193,140,.35)}
-  .tag.blue{background:rgba(132,183,255,.16); color:#deebff; border:1px solid rgba(132,183,255,.35)}
-  .tag.warn{background:rgba(240,179,92,.18); color:#ffe3b8; border:1px solid rgba(240,179,92,.35)}
-  .tag.red{background:rgba(238,123,123,.18); color:#ffd7d7; border:1px solid rgba(238,123,123,.35)}
+  .tag.green{background:rgba(115,201,150,.16); color:#d4f8df; border-color:rgba(115,201,150,.32)}
+  .tag.blue{background:rgba(145,190,255,.16); color:#e3efff; border-color:rgba(145,190,255,.32)}
+  .tag.warn{background:rgba(240,190,112,.18); color:#ffe8bf; border-color:rgba(240,190,112,.32)}
+  .tag.red{background:rgba(236,132,132,.18); color:#ffd9d9; border-color:rgba(236,132,132,.32)}
 
   .forecast-list{display:flex; flex-direction:column; gap:10px}
   .forecast-item{
-    display:grid; grid-template-columns:120px 1fr 90px; align-items:center;
-    gap:10px; padding:12px 14px; border-radius:14px; background:var(--panel-2);
+    display:grid; grid-template-columns:120px 1fr 90px; align-items:center; gap:10px;
+    padding:12px 14px; border-radius:14px; background:var(--panel3);
   }
-  .forecast-item.today{border:1px solid rgba(214,177,92,.38); background:rgba(214,177,92,.12)}
-  .forecast-item .day{font-size:20px}
+  .forecast-item.today{
+    background:rgba(215,179,96,.12); border:1px solid rgba(215,179,96,.34)
+  }
+  .forecast-item .day{font-size:18px}
   .forecast-item .ficon{text-align:center; font-size:28px}
-  .forecast-item .temps{text-align:right; font-size:22px}
-  .forecast-item .temps .max{color:#ff9b9b; font-weight:700}
-  .forecast-item .temps .min{color:#bcd7ff}
+  .forecast-item .temps{text-align:right; font-size:18px}
+  .forecast-item .max{color:#ff9e9e; font-weight:700}
+  .forecast-item .min{color:#c9ddff}
+
   .divider{height:1px; background:rgba(255,255,255,.10); margin:14px 0}
   .mini-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 
-  .info-rows{display:flex; flex-direction:column; gap:0}
   .row{
-    display:grid; grid-template-columns:1.2fr 1fr;
-    gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.08)
+    display:grid; grid-template-columns:1.2fr 1fr; gap:12px;
+    padding:10px 0; border-bottom:1px solid rgba(255,255,255,.08)
   }
   .row:last-child{border-bottom:none}
-  .row .l{color:var(--muted); font-size:18px}
-  .row .r{text-align:right; font-size:18px; font-weight:600}
+  .l{color:var(--muted); font-size:18px}
+  .r{text-align:right; font-size:18px; font-weight:700}
 
   .hobby-row{
-    display:grid; grid-template-columns:1.05fr 1fr; gap:14px; align-items:center;
-    background:var(--panel-2); border-radius:14px; padding:12px 14px; margin-bottom:10px;
+    display:grid; grid-template-columns:1.1fr 1fr; gap:12px;
+    align-items:center; background:var(--panel3); border-radius:14px; padding:12px 14px; margin-bottom:10px;
   }
-  .hobby-row:last-child{margin-bottom:0}
   .hobby-left{font-size:20px; color:var(--muted)}
   .hobby-right{text-align:right}
-  .hobby-status{font-size:22px; font-weight:700}
+  .hobby-status{font-size:21px; font-weight:800}
   .hobby-note{font-size:14px; color:var(--dim)}
 
-  .decision-card{
-    background:rgba(255,255,255,.12);
-    border:1px solid rgba(255,255,255,.18);
-  }
-  .decision-list{display:flex; flex-direction:column; gap:10px}
-  .decision-item{
-    padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.08);
-    font-size:20px; line-height:1.35;
-  }
-
-  .priority-output{
-    margin-top:10px; padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.08);
-    color:#f4f7fb; font-size:18px;
-  }
-
-  .footer-note{text-align:center; color:var(--dim); margin-top:10px; font-size:13px; letter-spacing:.18em}
-
   .loading{color:var(--muted)}
-  @media (max-width: 900px){
+  .footer-note{text-align:center; color:var(--dim); font-size:13px; letter-spacing:.18em; margin-top:8px}
+
+  @media (max-width:980px){
     .grid{grid-template-columns:1fr}
-    .forecast-item{grid-template-columns:100px 1fr 80px}
   }
-  @media (max-width: 560px){
-    .row,.hobby-row{grid-template-columns:1fr}
-    .row .r,.hobby-right{text-align:left}
+  @media (max-width:620px){
+    .best-window,.stats-grid,.mini-grid{grid-template-columns:1fr}
     .forecast-item{grid-template-columns:1fr 60px 80px}
-    .forecast-item .day{font-size:18px}
-    .big-temp{font-size:50px}
+    .row,.hobby-row{grid-template-columns:1fr}
+    .r,.hobby-right{text-align:left}
     .summary{font-size:16px}
   }
 </style>
@@ -181,39 +196,42 @@
     <div class="card decision-card">
       <h3>Τι να κάνεις σήμερα</h3>
       <div class="decision-list" id="decisionList"></div>
-      <div class="priority-output" id="prioritySavedText">Επίλεξε προτεραιότητα.</div>
     </div>
+    <div class="card">
+      <h3>Καλύτερο παράθυρο σήμερα</h3>
+      <div class="best-window" id="bestWindow"></div>
+    </div>
+  </div>
 
+  <div class="grid">
     <div class="card">
       <h3>Alerts / Προσοχές</h3>
       <div class="decision-list" id="alertsList"></div>
+    </div>
+    <div class="card">
+      <h3>Προτεραιότητα ημέρας</h3>
+      <div class="decision-list" id="priorityPanel"></div>
     </div>
   </div>
 
   <div class="grid">
     <div class="card">
       <h3>Καιρός τώρα</h3>
-      <div id="weatherNow">
-        <div class="loading">Φόρτωση...</div>
-      </div>
+      <div id="weatherNow"><div class="loading">Φόρτωση...</div></div>
     </div>
-
     <div class="card">
       <h3>3ήμερη πρόγνωση</h3>
-      <div id="forecastBlock">
-        <div class="loading">Φόρτωση...</div>
-      </div>
+      <div id="forecastBlock"><div class="loading">Φόρτωση...</div></div>
     </div>
   </div>
 
   <div class="grid">
     <div class="card">
       <h3>Radio</h3>
-      <div class="info-rows" id="radioBlock"></div>
+      <div id="radioBlock"></div>
       <div class="divider"></div>
-      <div id="radioFoot" class="smallline"></div>
+      <div class="smallline" id="radioFoot"></div>
     </div>
-
     <div class="card">
       <h3>Hobbies — Συνθήκες</h3>
       <div id="hobbiesBlock"></div>
@@ -222,15 +240,14 @@
 
   <div class="grid">
     <div class="card">
-      <h3>Προτεραιότητα ημέρας</h3>
-      <div class="smallline" id="priorityMeaning">Δεν έχει επιλεγεί προτεραιότητα.</div>
-    </div>
-
-    <div class="card">
       <h3>Σήμερα & Σκέψη</h3>
       <div class="smallline" id="historyText"></div>
       <div class="divider"></div>
       <div class="smallline" id="quoteText"></div>
+    </div>
+    <div class="card">
+      <h3>Σημείωση v3</h3>
+      <div class="smallline">Η λογική βελτιώθηκε ώστε η προτεραιότητα να αλλάζει όχι μόνο το κείμενο, αλλά και τη βαρύτητα των αποφάσεων και των χρονικών παραθύρων.</div>
     </div>
   </div>
 
@@ -239,59 +256,21 @@
 
 <script>
 const LOCATIONS = {
-  ilioupoli: {
-    label: "Ηλιούπολη",
-    lat: 37.9317, lon: 23.7617,
-    sea: null, archery: true, traffic: true,
-    desc: "Βασική κατοικία",
-    hamRepeater: "145.625 MHz (SV1RVX)"
-  },
-  loutraki: {
-    label: "Λουτράκι",
-    lat: 37.9756, lon: 22.9847,
-    sea: "Κορινθιακός", archery: false, traffic: false,
-    desc: "Κορινθιακός Κόλπος",
-    hamRepeater: "145.600 MHz"
-  },
-  kerkyra: {
-    label: "Κέρκυρα",
-    lat: 39.6243, lon: 19.9217,
-    sea: "Ιόνιο", archery: false, traffic: false,
-    desc: "Βόρειο Ιόνιο",
-    hamRepeater: "145.500 MHz (κλήση)"
-  },
-  xanthi: {
-    label: "Ξάνθη",
-    lat: 41.1355, lon: 24.8880,
-    sea: null, archery: true, traffic: false,
-    desc: "Βόρεια Ελλάδα",
-    hamRepeater: "145.575 MHz"
-  }
+  ilioupoli: { label:"Ηλιούπολη", lat:37.9317, lon:23.7617, sea:null, archery:true, traffic:true, desc:"Βασική κατοικία", hamRepeater:"145.625 MHz (SV1RVX)" },
+  loutraki: { label:"Λουτράκι", lat:37.9756, lon:22.9847, sea:"Κορινθιακός", archery:false, traffic:false, desc:"Κορινθιακός Κόλπος", hamRepeater:"145.600 MHz" },
+  kerkyra: { label:"Κέρκυρα", lat:39.6243, lon:19.9217, sea:"Ιόνιο", archery:false, traffic:false, desc:"Βόρειο Ιόνιο", hamRepeater:"145.500 MHz (κλήση)" },
+  xanthi: { label:"Ξάνθη", lat:41.1355, lon:24.8880, sea:null, archery:true, traffic:false, desc:"Βόρεια Ελλάδα", hamRepeater:"145.575 MHz" }
 };
-
 const PRIORITIES = [
-  { key:"none", label:"Καμία" },
-  { key:"gardening", label:"Κηπουρική" },
-  { key:"work", label:"Εργασία" },
-  { key:"radio", label:"Radio" },
-  { key:"photo", label:"Φωτογραφία" },
-  { key:"outdoor", label:"Έξοδος" }
+  {key:"none",label:"Καμία"},
+  {key:"gardening",label:"Κηπουρική"},
+  {key:"work",label:"Εργασία"},
+  {key:"radio",label:"Radio"},
+  {key:"photo",label:"Φωτογραφία"},
+  {key:"outdoor",label:"Έξοδος"}
 ];
-
-const WMO_CODES = {
-  0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",
-  45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",
-  61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",
-  75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",
-  95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"
-};
-const WMO_ICON = {
-  0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",
-  51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",
-  71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",
-  95:"⛈️",96:"⛈️",99:"⛈️"
-};
-
+const WMO_CODES = {0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"};
+const WMO_ICON = {0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",95:"⛈️",96:"⛈️",99:"⛈️"};
 const HISTORY_FACTS = [
  "1452: Γεννήθηκε ο Λεονάρντο ντα Βίντσι.",
  "1906: Ο Marconi συνδέεται με την επανάσταση του ραδιοφώνου.",
@@ -302,7 +281,6 @@ const HISTORY_FACTS = [
  "1932: Η Amelia Earhart διασχίζει μόνη τον Ατλαντικό.",
  "1865: Δολοφονείται ο Abraham Lincoln."
 ];
-
 const QUOTES = [
  "Η καλύτερη στιγμή να φυτέψεις ένα δέντρο ήταν πριν χρόνια. Η δεύτερη καλύτερη είναι τώρα.",
  "Φωτογράφισε αυτό που αγαπάς και αγάπα αυτό που φωτογραφίζεις.",
@@ -328,8 +306,7 @@ function beaufortDesc(kmh){
   if (kmh < 62) return "7 – Σφοδρός άνεμος";
   return "8+ – Θυελλώδης";
 }
-
-function getMoonPhase(date) {
+function getMoonPhase(date){
   const known = new Date(2000, 0, 6);
   const diff = (date - known) / 86400000;
   const cycle = 29.53;
@@ -338,29 +315,27 @@ function getMoonPhase(date) {
   const names = ["Νέα Σελήνη","Αυξανόμενη","Πρώτο Τέταρτο","Αυξανόμενη","Πανσέληνος","Φθίνουσα","Τελευταίο Τέταρτο","Φθίνουσα"];
   return names[idx];
 }
-
-function getSunTimes(lat, lon, date) {
-  const rad = Math.PI / 180;
-  const d = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
-  const B = (360 / 365) * (d - 81) * rad;
-  const ET = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+function getSunTimes(lat, lon, date){
+  const rad = Math.PI/180;
+  const d = Math.floor((date - new Date(date.getFullYear(),0,0))/86400000);
+  const B = (360/365)*(d-81)*rad;
+  const ET = 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
   const tz = 2;
-  const lstm = 15 * tz;
-  const tc = 4 * (lon - lstm) + ET;
-  const declination = 23.45 * Math.sin(B) * rad;
-  const latR = lat * rad;
-  const cosH = -Math.tan(latR) * Math.tan(declination);
+  const lstm = 15*tz;
+  const tc = 4*(lon-lstm)+ET;
+  const declination = 23.45*Math.sin(B)*rad;
+  const latR = lat*rad;
+  const cosH = -Math.tan(latR)*Math.tan(declination);
   const H = Math.acos(Math.max(-1, Math.min(1, cosH))) / rad;
-  const sunrise = 12 - H / 15 - tc / 60;
-  const sunset = 12 + H / 15 - tc / 60;
-  const fmt = (h) => {
+  const sunrise = 12 - H/15 - tc/60;
+  const sunset = 12 + H/15 + (-tc/60);
+  const fmt = h => {
     const hh = Math.floor(h);
-    const mm = Math.round((h - hh) * 60);
+    const mm = Math.round((h-hh)*60);
     return `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;
   };
-  return { sunrise: fmt(sunrise), sunset: fmt(sunset), golden: fmt(sunset - 1) };
+  return { sunrise:fmt(sunrise), sunset:fmt(sunset), golden:fmt(sunset-1) };
 }
-
 function greekDayName(dateStr){
   const d = new Date(dateStr);
   const days = ["Κυριακή","Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο"];
@@ -369,10 +344,8 @@ function greekDayName(dateStr){
 
 function updateClock(){
   const now = new Date();
-  document.getElementById("dateText").textContent =
-    now.toLocaleDateString('el-GR',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  document.getElementById("timeText").textContent =
-    now.toLocaleTimeString('el-GR',{hour:'2-digit', minute:'2-digit'});
+  document.getElementById("dateText").textContent = now.toLocaleDateString('el-GR',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById("timeText").textContent = now.toLocaleTimeString('el-GR',{hour:'2-digit', minute:'2-digit'});
   document.getElementById("historyText").textContent = HISTORY_FACTS[now.getDate() % HISTORY_FACTS.length];
   document.getElementById("quoteText").textContent = QUOTES[now.getDate() % QUOTES.length];
 }
@@ -380,9 +353,9 @@ function updateClock(){
 function renderLocationButtons(){
   const box = document.getElementById("locationButtons");
   box.innerHTML = "";
-  Object.entries(LOCATIONS).forEach(([key, loc])=>{
+  Object.entries(LOCATIONS).forEach(([key,loc])=>{
     const btn = document.createElement("button");
-    btn.className = "pill" + (key === currentLocation ? " active":"");
+    btn.className = "pill" + (key===currentLocation ? " active" : "");
     btn.textContent = loc.label;
     btn.onclick = ()=> {
       currentLocation = key;
@@ -395,15 +368,14 @@ function renderLocationButtons(){
   });
   document.getElementById("locationDesc").textContent = LOCATIONS[currentLocation].desc;
 }
-
 function renderPriorityButtons(){
   const box = document.getElementById("priorityButtons");
   box.innerHTML = "";
   PRIORITIES.forEach(p=>{
     const btn = document.createElement("button");
-    btn.className = "pill" + (p.key === currentPriority ? " active":"");
+    btn.className = "pill" + (p.key===currentPriority ? " active":"");
     btn.textContent = p.label;
-    btn.onclick = ()=> {
+    btn.onclick = ()=>{
       currentPriority = p.key;
       localStorage.setItem("md_priority", currentPriority);
       renderPriorityButtons();
@@ -426,7 +398,6 @@ async function fetchWeather(){
   }catch(e){
     document.getElementById("weatherNow").innerHTML = '<div class="loading">Αδυναμία φόρτωσης καιρού.</div>';
     document.getElementById("forecastBlock").innerHTML = '<div class="loading">Αδυναμία φόρτωσης πρόγνωσης.</div>';
-    updateDecisionBlocks();
   }
 }
 
@@ -435,7 +406,6 @@ function renderWeather(){
   const now = new Date();
   const sun = getSunTimes(loc.lat, loc.lon, now);
   const moon = getMoonPhase(now);
-
   const cur = weatherData?.current || {};
   const daily = weatherData?.daily || {};
   const temp = Math.round(cur.temperature_2m ?? 0);
@@ -485,8 +455,7 @@ function renderWeather(){
       <div class="stat"><div class="label">Δύση</div><div class="value">${sun.sunset}</div></div>
       <div class="stat"><div class="label">Χρυσή ώρα</div><div class="value">${sun.golden}</div></div>
       <div class="stat"><div class="label">Σελήνη</div><div class="value">${moon}</div></div>
-    </div>
-  `;
+    </div>`;
   document.getElementById("forecastBlock").innerHTML = forecast;
 
   renderRadio();
@@ -495,22 +464,17 @@ function renderWeather(){
 
 function renderRadio(){
   const loc = LOCATIONS[currentLocation];
-  const cur = weatherData?.current || {};
-  const wind = Math.round(cur.wind_speed_10m ?? 0);
-  const uv = +(cur.uv_index ?? 0).toFixed(1);
-
+  const wind = Math.round(weatherData?.current?.wind_speed_10m ?? 0);
   let hfText = "Σταθερές συνθήκες — καλό παράθυρο για άνετη δραστηριότητα";
-  if (wind >= 40) hfText = "Ο καιρός είναι πιο σκληρός από όσο χρειάζεται το block radio.";
-  else if (uv >= 7) hfText = "Καλή μέρα γενικά, αλλά η βασική εικόνα RF παραμένει απλοποιημένη.";
-
+  if (wind >= 35) hfText = "Ο καιρός είναι πιο σκληρός από όσο χρειάζεται για ήρεμη radio χρήση.";
+  if (currentPriority === "radio") hfText = "Η σημερινή προτεραιότητα ευνοεί radio χρήση· ξεκίνα από 2m και μετά δοκίμασε HF.";
   document.getElementById("radioBlock").innerHTML = `
     <div class="row"><div class="l">Τοπικός repeater</div><div class="r">${loc.hamRepeater}</div></div>
     <div class="row"><div class="l">Κλήση FM (2m)</div><div class="r">145.500 MHz</div></div>
     <div class="row"><div class="l">Κλήση SSB (2m)</div><div class="r">144.300 MHz</div></div>
     <div class="row"><div class="l">HF συνθήκες</div><div class="r">${hfText}</div></div>
   `;
-  document.getElementById("radioFoot").textContent =
-    "Το block αυτό είναι ακόμη απλοποιημένο. Δείχνει χρήσιμη εκτίμηση, όχι πλήρη επαγγελματική ροή RF.";
+  document.getElementById("radioFoot").textContent = "Το πλήρες propagation δεν έχει ακόμη συνδεθεί με πραγματική εξωτερική πηγή.";
 }
 
 function renderHobbies(){
@@ -526,21 +490,21 @@ function renderHobbies(){
   let photo = uv < 3 ? "Μαλακό φως" : uv < 7 ? "Καλό φως" : "Έντονο φως";
   let archery = wind < 20 ? "Ιδανικό" : wind < 35 ? "Προσοχή" : "Ακατάλληλο";
   let garden = temp < 10 ? "Κρύο" : temp > 35 ? "Καύσωνας" : "Καλές συνθήκες";
-  let radio = "Άνετα";
+  let radio = currentPriority === "radio" ? "Προτεραιότητα" : "Άνετα";
 
   document.getElementById("hobbiesBlock").innerHTML = `
     <div class="hobby-row">
       <div class="hobby-left">Φωτογραφία</div>
       <div class="hobby-right">
         <div class="hobby-status">${photo}</div>
-        <div class="hobby-note">Η καλύτερη στιγμή συνήθως είναι κοντά στη χρυσή ώρα ${sun.golden}</div>
+        <div class="hobby-note">Καλύτερο παράθυρο γύρω στις ${sun.golden}</div>
       </div>
     </div>
     <div class="hobby-row">
       <div class="hobby-left">Τοξοβολία</div>
       <div class="hobby-right">
         <div class="hobby-status">${loc.archery ? archery : "—"}</div>
-        <div class="hobby-note">${loc.archery ? `Άνεμος: ${wind} km/h` : "Η τοποθεσία αυτή δεν έχει ενεργοποιημένο τοξοβολικό context."}</div>
+        <div class="hobby-note">${loc.archery ? `Άνεμος: ${wind} km/h` : "Δεν έχει ενεργό τοξοβολικό context εδώ."}</div>
       </div>
     </div>
     <div class="hobby-row">
@@ -554,94 +518,143 @@ function renderHobbies(){
       <div class="hobby-left">Ραδιοερασιτεχνισμός</div>
       <div class="hobby-right">
         <div class="hobby-status">${radio}</div>
-        <div class="hobby-note">Το πλήρες propagation θα χρειαστεί αργότερα πραγματική πηγή δεδομένων.</div>
+        <div class="hobby-note">Βελτιωμένη έμφαση όταν η προτεραιότητα είναι Radio.</div>
       </div>
     </div>
   `;
 }
 
+function severityAlert(text, sev){
+  return `<div class="decision-item alert-${sev}">${text}</div>`;
+}
+
 function updateDecisionBlocks(){
+  if(!weatherData) return;
   const loc = LOCATIONS[currentLocation];
-  const cur = weatherData?.current || {};
   const now = new Date();
   const sun = getSunTimes(loc.lat, loc.lon, now);
+  const cur = weatherData.current || {};
   const wind = Math.round(cur.wind_speed_10m ?? 0);
   const uv = +(cur.uv_index ?? 0).toFixed(1);
   const temp = Math.round(cur.temperature_2m ?? 0);
 
-  const decisions = [];
-  const alerts = [];
+  let decisions = [];
+  let alerts = [];
+  let best = [];
+  let priorityPanel = [];
+  let summary = `${loc.label}: `;
 
-  // base decisions
-  if (wind < 20) decisions.push(`✔ Άνεμος ήπιος — καλό γενικό παράθυρο για εξωτερική δραστηριότητα.`);
-  else if (wind < 35) decisions.push(`⚠ Ο άνεμος θέλει μέτρο — διάλεξε πιο προστατευμένη δραστηριότητα.`);
-  else decisions.push(`✖ Ο άνεμος είναι υψηλός — απόφυγε δραστηριότητες που θέλουν σταθερότητα.`);
-
-  decisions.push(`✔ Χρυσή ώρα περίπου στις ${sun.golden} — αυτό είναι το καλύτερο φυσικό παράθυρο για εικόνα και πιο ήπιες εξωτερικές κινήσεις.`);
+  const workWindow = "08:00–11:30";
+  const outdoorWindow = uv >= 7 ? `${sun.golden}–${sun.sunset}` : `10:00–12:00 / ${sun.golden}–${sun.sunset}`;
+  const photoWindow = `${sun.golden}–${sun.sunset}`;
+  const gardeningWindow = temp >= 28 || uv >= 6 ? `${sun.golden}–${sun.sunset}` : `09:00–11:00 / ${sun.golden}–${sun.sunset}`;
+  const radioWindow = "Βραδινό ή ήρεμο απογευματινό παράθυρο";
 
   if (currentPriority === "gardening"){
-    decisions.unshift(`🌿 Προτεραιότητα: Κηπουρική — καλύτερη επιλογή αργά το απόγευμα, γύρω από ${sun.golden} έως τη δύση.`);
-    document.getElementById("priorityMeaning").textContent =
-      `Έχεις επιλέξει Κηπουρική. Το dashboard δίνει βάρος σε άνεμο, UV και απογευματινό παράθυρο.`;
-    document.getElementById("prioritySavedText").textContent =
-      `Αποθηκευμένη προτεραιότητα: Κηπουρική. Για σήμερα, προτίμησε αργά το απόγευμα.`;
+    decisions.push("🌿 Προώθησε κηπουρική μόνο σε πιο ήπιο φως. Μην τη σπρώχνεις άσκοπα στο μεσημέρι.");
+    decisions.push(`✔ Κράτησε ως βασικό παράθυρο το ${gardeningWindow}.`);
+    decisions.push("✔ Δευτερεύουσα χρήση της ημέρας: μικρές εσωτερικές δουλειές πριν από την έξοδο.");
+    best = [
+      ["Κηπουρική", gardeningWindow, "Η σημερινή σου προτεραιότητα."],
+      ["Φωτογραφία", photoWindow, "Αν είσαι ήδη έξω κοντά στη δύση."],
+      ["Εργασία", workWindow, "Μόνο σύντομο, πειθαρχημένο πρωινό μπλοκ."],
+      ["Radio", radioWindow, "Δευτερεύον σήμερα."]
+    ];
+    priorityPanel.push("Έχεις δώσει προτεραιότητα στην Κηπουρική.");
+    priorityPanel.push("Το dashboard υποβαθμίζει το μεσημεριανό παράθυρο και αναδεικνύει αργότερη έξοδο.");
+    summary += "η μέρα δουλεύει καλύτερα για κηπουρική αργότερα, όχι βιαστικά στο σκληρό φως.";
   } else if (currentPriority === "work"){
-    decisions.unshift(`💼 Προτεραιότητα: Εργασία — κράτα το πρωινό ήσυχο παράθυρο για συγκεντρωμένη δουλειά και άσε εξωτερικές κινήσεις αργότερα.`);
-    document.getElementById("priorityMeaning").textContent =
-      `Έχεις επιλέξει Εργασία. Το dashboard προωθεί καθαρή, συγκεντρωμένη χρήση της ημέρας.`;
-    document.getElementById("prioritySavedText").textContent =
-      `Αποθηκευμένη προτεραιότητα: Εργασία. Κλείδωσε πρώτα μία σοβαρή ενότητα δουλειάς.`;
+    decisions.push("💼 Κλείδωσε πρώτα μία σοβαρή ενότητα συγκεντρωμένης εργασίας.");
+    decisions.push(`✔ Προστάτευσε το παράθυρο ${workWindow} από άσχετες εξωτερικές κινήσεις.`);
+    decisions.push("✔ Άφησε την έξοδο ή τις δευτερεύουσες δραστηριότητες για αργότερα.");
+    best = [
+      ["Εργασία", workWindow, "Το βασικό μπλοκ της ημέρας."],
+      ["Έξοδος", outdoorWindow, "Μετά τη δουλειά."],
+      ["Φωτογραφία", photoWindow, "Αν θες μικρή αποσυμπίεση."],
+      ["Κηπουρική", gardeningWindow, "Μόνο ως δεύτερη χρήση."]
+    ];
+    priorityPanel.push("Έχεις δώσει προτεραιότητα στην Εργασία.");
+    priorityPanel.push("Η λογική δίνει πρώτο βάρος στη συγκέντρωση και μετά στις εξωτερικές κινήσεις.");
+    summary += "πρώτα χρειάζεται συγκεντρωμένη εργασία και μετά οργανωμένη έξοδος.";
   } else if (currentPriority === "radio"){
-    decisions.unshift(`📡 Προτεραιότητα: Radio — καλό παράθυρο για άνετη δραστηριότητα VHF και ελαφριά ραδιοερασιτεχνική χρήση.`);
-    document.getElementById("priorityMeaning").textContent =
-      `Έχεις επιλέξει Radio. Το dashboard δίνει βάρος στο block repeater/calling και στη γενική σταθερότητα της ημέρας.`;
-    document.getElementById("prioritySavedText").textContent =
-      `Αποθηκευμένη προτεραιότητα: Radio. Δοκίμασε πρώτα 2m και μετά, αν θες, πιο χαλαρό HF.`;
+    decisions.push("📡 Αν η μέρα είναι για radio, ξεκίνα από 2m / repeater και κράτα το HF ως δεύτερο στάδιο.");
+    decisions.push("✔ Μην κυνηγάς πολλά μαζί. Βάλε ξεκάθαρο radio session.");
+    decisions.push(`✔ Το πιο άνετο παράθυρο είναι: ${radioWindow}.`);
+    best = [
+      ["Radio", radioWindow, "Η σημερινή κύρια χρήση."],
+      ["Εργασία", workWindow, "Μικρό πρωινό μπλοκ αν χρειάζεται."],
+      ["Φωτογραφία", photoWindow, "Μόνο αν βγεις αργότερα."],
+      ["Έξοδος", outdoorWindow, "Δευτερεύουσα προτεραιότητα."]
+    ];
+    priorityPanel.push("Έχεις δώσει προτεραιότητα στο Radio.");
+    priorityPanel.push("Το dashboard αναβαθμίζει την αξία του radio block και του ήρεμου βραδινού παραθύρου.");
+    summary += "η μέρα σηκώνει ήπιο radio focus και όχι διάσπαση σε άσχετες κινήσεις.";
   } else if (currentPriority === "photo"){
-    decisions.unshift(`📷 Προτεραιότητα: Φωτογραφία — το βασικό παράθυρο είναι κοντά στη χρυσή ώρα ${sun.golden}.`);
-    document.getElementById("priorityMeaning").textContent =
-      `Έχεις επιλέξει Φωτογραφία. Το dashboard δίνει βάρος σε φως, UV και ώρα δύσης.`;
-    document.getElementById("prioritySavedText").textContent =
-      `Αποθηκευμένη προτεραιότητα: Φωτογραφία. Δούλεψε κοντά στη χρυσή ώρα για πιο ασφαλές και όμορφο φως.`;
+    decisions.push("📷 Στη φωτογραφία, η ώρα μετρά περισσότερο από την ποσότητα της ημέρας.");
+    decisions.push(`✔ Φρόντισε να είσαι έτοιμος πριν από τη χρυσή ώρα ${sun.golden}.`);
+    decisions.push("✔ Μην ξοδέψεις το καλύτερο φως σε προετοιμασία της τελευταίας στιγμής.");
+    best = [
+      ["Φωτογραφία", photoWindow, "Το σημαντικότερο παράθυρο σήμερα."],
+      ["Έξοδος", outdoorWindow, "Συνδυάζεται εύκολα με τη φωτογραφία."],
+      ["Εργασία", workWindow, "Πρωινό κλειστό μπλοκ μόνο."],
+      ["Κηπουρική", gardeningWindow, "Δευτερεύουσα επιλογή."]
+    ];
+    priorityPanel.push("Έχεις δώσει προτεραιότητα στη Φωτογραφία.");
+    priorityPanel.push("Το dashboard αναδεικνύει περισσότερο το παράθυρο φωτός παρά τη συνολική διάρκεια της ημέρας.");
+    summary += "η αξία της ημέρας είναι κυρίως στο σωστό φως και στο timing.";
   } else if (currentPriority === "outdoor"){
-    decisions.unshift(`🚶 Προτεραιότητα: Έξοδος — η μέρα είναι κατάλληλη αν σεβαστείς τον άνεμο και αποφύγεις το σκληρό μεσημεριανό φως.`);
-    document.getElementById("priorityMeaning").textContent =
-      `Έχεις επιλέξει Έξοδο. Το dashboard εστιάζει στη συνολική πρακτική χρήση της ημέρας.`;
-    document.getElementById("prioritySavedText").textContent =
-      `Αποθηκευμένη προτεραιότητα: Έξοδος. Διάλεξε ώρα με πιο ήπιο φως και λιγότερη πίεση.`;
+    decisions.push("🚶 Αν η μέρα είναι για έξοδο, σεβάσου πρώτα το φως και τον άνεμο και μετά όλα τα άλλα.");
+    decisions.push(`✔ Πιο ασφαλές και χρήσιμο παράθυρο: ${outdoorWindow}.`);
+    decisions.push("✔ Μην αφήσεις το μεσημέρι να σου χαλάσει μια κατά τα άλλα καλή έξοδο.");
+    best = [
+      ["Έξοδος", outdoorWindow, "Κύριο παράθυρο σήμερα."],
+      ["Φωτογραφία", photoWindow, "Αν θέλεις καλύτερη εικόνα."],
+      ["Κηπουρική", gardeningWindow, "Αντί για απλή βόλτα, μόνο αν σε ωφελεί."],
+      ["Εργασία", workWindow, "Σύντομο πρωινό τακτοποίημα."]
+    ];
+    priorityPanel.push("Έχεις δώσει προτεραιότητα στην Έξοδο.");
+    priorityPanel.push("Το dashboard δίνει έμφαση σε πιο ήπιο παράθυρο και όχι σε τυφλή διάθεση για έξω.");
+    summary += "καλό πρακτικό παράθυρο για έξοδο υπάρχει, αν διαλέξεις σωστή ώρα.";
   } else {
-    document.getElementById("priorityMeaning").textContent =
-      `Δεν έχει επιλεγεί συγκεκριμένη προτεραιότητα. Το dashboard δίνει γενική εικόνα και βασικές αποφάσεις.`;
-    document.getElementById("prioritySavedText").textContent =
-      `Δεν έχει αποθηκευτεί ειδική προτεραιότητα. Επίλεξε μία από τα κουμπιά πιο πάνω.`;
+    decisions.push("✔ Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός, μετά τα υπόλοιπα.");
+    decisions.push(`✔ Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${sun.golden}.`);
+    decisions.push("✔ Αν δεν ορίσεις προτεραιότητα, το dashboard μένει εσκεμμένα γενικό.");
+    best = [
+      ["Εργασία", workWindow, "Για καθαρή πρωινή συγκέντρωση."],
+      ["Έξοδος", outdoorWindow, "Για ήπια πρακτική χρήση της ημέρας."],
+      ["Φωτογραφία", photoWindow, "Για καλύτερο φως."],
+      ["Κηπουρική", gardeningWindow, "Αν τελικά κινηθείς έξω."]
+    ];
+    priorityPanel.push("Δεν έχει επιλεγεί συγκεκριμένη προτεραιότητα.");
+    priorityPanel.push("Το dashboard δίνει γενική εικόνα και βασικές αποφάσεις.");
+    summary += "η μέρα είναι ισορροπημένη και χρειάζεται μόνο σωστή επιλογή ώρας.";
   }
 
-  // alerts
-  if (uv >= 7) alerts.push(`⚠ Υψηλό UV — απόφυγε το σκληρό μεσημεριανό παράθυρο.`);
-  else if (uv >= 4) alerts.push(`⚠ Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες για εξωτερικές εργασίες.`);
-  else alerts.push(`✔ Το UV είναι ήπιο — δεν είναι ο βασικός κίνδυνος της ημέρας.`);
+  if (uv >= 7) alerts.push(severityAlert("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.", "high"));
+  else if (uv >= 4) alerts.push(severityAlert("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.", "medium"));
+  else alerts.push(severityAlert("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.", "low"));
 
-  if (wind >= 35) alerts.push(`✖ Δυνατός άνεμος — κράτα πίσω τοξοβολία και ευαίσθητες εξωτερικές κινήσεις.`);
-  else if (wind >= 20) alerts.push(`⚠ Μέτριος άνεμος — θέλει κρίση, όχι αυτοματισμό.`);
-  else alerts.push(`✔ Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.`);
+  if (wind >= 35) alerts.push(severityAlert("Δυνατός άνεμος — κράτα πίσω τοξοβολία και δραστηριότητες που θέλουν σταθερότητα.", "high"));
+  else if (wind >= 20) alerts.push(severityAlert("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.", "medium"));
+  else alerts.push(severityAlert("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.", "low"));
 
-  if (loc.traffic) alerts.push(`⚠ Στην ${loc.label}, η μετακίνηση θέλει κοινή λογική στις ώρες αιχμής.`);
-  if (temp >= 33) alerts.push(`⚠ Θερμοκρασία υψηλή — κράτα ενυδάτωση και μείωσε τη διάρκεια έξω.`);
+  if (temp >= 33) alerts.push(severityAlert("Υψηλή θερμοκρασία — κράτα ενυδάτωση και μικρότερη διάρκεια έξω.", "high"));
+  if (LOCATIONS[currentLocation].traffic) alerts.push(severityAlert(`Στην ${loc.label}, η μετακίνηση θέλει κοινή λογική στις ώρες αιχμής.`, "medium"));
 
-  document.getElementById("decisionList").innerHTML = decisions.map(x => `<div class="decision-item">${x}</div>`).join("");
-  document.getElementById("alertsList").innerHTML = alerts.map(x => `<div class="decision-item">${x}</div>`).join("");
-
-  let summary = `${LOCATIONS[currentLocation].label}: `;
-  if (currentPriority === "gardening") summary += `καλή μέρα για κηπουρική, αλλά σωστό παράθυρο κυρίως προς το απόγευμα.`;
-  else if (currentPriority === "work") summary += `η μέρα σηκώνει πειθαρχημένη εργασία και οργανωμένη έξοδο αργότερα.`;
-  else if (currentPriority === "radio") summary += `ήπια μέρα για χαλαρή ραδιοερασιτεχνική χρήση και γενική σταθερότητα.`;
-  else if (currentPriority === "photo") summary += `το ουσιαστικό παράθυρο είναι κοντά στη χρυσή ώρα για καλύτερη εικόνα.`;
-  else if (currentPriority === "outdoor") summary += `ισορροπημένες συνθήκες για έξοδο, με σεβασμό σε UV και άνεμο.`;
-  else summary += `ισορροπημένες συνθήκες — καλή μέρα για οργανωμένη έξοδο ή συγκροτημένη δουλειά.`;
+  document.getElementById("decisionList").innerHTML = decisions.map(x=>`<div class="decision-item">${x}</div>`).join("");
+  document.getElementById("alertsList").innerHTML = alerts.join("");
+  document.getElementById("bestWindow").innerHTML = best.map(([label,value,note])=>`
+    <div class="best-item">
+      <div class="label">${label}</div>
+      <div class="value">${value}</div>
+      <div class="note">${note}</div>
+    </div>
+  `).join("");
+  document.getElementById("priorityPanel").innerHTML = priorityPanel.map(x=>`<div class="decision-item">${x}</div>`).join("");
 
   document.getElementById("summaryText").textContent = summary;
   document.getElementById("footerNote").textContent =
-    `${LOCATIONS[currentLocation].label.toUpperCase()} • ${PRIORITIES.find(p=>p.key===currentPriority)?.label || "Καμία"} • προσωπικό dashboard v2`;
+    `${LOCATIONS[currentLocation].label.toUpperCase()} • ${PRIORITIES.find(p=>p.key===currentPriority)?.label || "Καμία"} • προσωπικό dashboard v3`;
 }
 
 updateClock();
