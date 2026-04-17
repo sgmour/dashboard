@@ -1,13 +1,14 @@
 <!doctype html><html lang='el'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Morning Dashboard v5</title>
+<title>Morning Dashboard v5.1</title>
 <style>
 :root{--bg1:#1b3148;--bg2:#3a5670;--p:rgba(255,255,255,.12);--p2:rgba(255,255,255,.09);--b:rgba(255,255,255,.16);--t:#f5f1e8;--m:#d5dde6;--d:#afbcc8;--g:#d7b360;--gr:#73c996;--w:#f0be70;--r:#ec8484}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,Arial;color:var(--t);background:linear-gradient(180deg,var(--bg2),var(--bg1));padding:18px}
-.wrap{max-width:1240px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--p);border:1px solid var(--b);border-radius:22px;padding:16px;margin:0 0 16px}.list{display:flex;flex-direction:column;gap:10px}.item{background:var(--p2);border-radius:14px;padding:12px 14px;line-height:1.35}.pill{padding:8px 12px;border-radius:999px;border:1px solid var(--b);background:rgba(0,0,0,.12);color:var(--m);display:inline-block;margin:4px;cursor:pointer}.active{background:rgba(215,179,96,.18);color:#fff1cc}.head{text-align:center}.sum{max-width:920px;margin:0 auto 14px;padding:13px 16px;border-radius:16px;background:rgba(255,221,136,.10);border:1px solid rgba(215,179,96,.38);color:#f8e8bd}.best{display:grid;grid-template-columns:1fr 1fr;gap:10px}.best>div,.slice>div,.stat{background:var(--p2);border-radius:14px;padding:12px}.small{color:var(--d);font-size:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}.row:last-child{border-bottom:none}.right{text-align:right}.alertH{border-left:4px solid var(--r)}.alertM{border-left:4px solid var(--w)}.alertL{border-left:4px solid var(--gr)}.slices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}@media(max-width:980px){.grid,.best,.slices{grid-template-columns:1fr}}
+.wrap{max-width:1240px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--p);border:1px solid var(--b);border-radius:22px;padding:16px;margin:0 0 16px}.list{display:flex;flex-direction:column;gap:10px}.item{background:var(--p2);border-radius:14px;padding:12px 14px;line-height:1.35}.pill{padding:8px 12px;border-radius:999px;border:1px solid var(--b);background:rgba(0,0,0,.12);color:var(--m);display:inline-block;margin:4px;cursor:pointer}.active{background:rgba(215,179,96,.18);color:#fff1cc}.head{text-align:center}.sum{max-width:920px;margin:0 auto 14px;padding:13px 16px;border-radius:16px;background:rgba(255,221,136,.10);border:1px solid rgba(215,179,96,.38);color:#f8e8bd}.best{display:grid;grid-template-columns:1fr 1fr;gap:10px}.best>div,.slice>div,.stat{background:var(--p2);border-radius:14px;padding:12px}.small{color:var(--d);font-size:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}.row:last-child{border-bottom:none}.right{text-align:right}.alertH{border-left:4px solid var(--r)}.alertM{border-left:4px solid var(--w)}.alertL{border-left:4px solid var(--gr)}.slices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.ver{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(215,179,96,.38);background:rgba(255,221,136,.08);color:#f8e8bd}.ok{color:#d4f8df}.bad{color:#ffd9d9}.info{color:#e9e2bf}
+@media(max-width:980px){.grid,.best,.slices{grid-template-columns:1fr}}
 h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;text-transform:uppercase}
 </style>
 <body><div class='wrap'>
-<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div>
+<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v5.1</div>
 <div id='locs'></div><div class='small' id='locdesc'></div><div id='pris'></div><div class='small'>Προτεραιότητα ημέρας</div><div id='projs'></div><div class='small'>Project focus</div></div>
 
 <div class='grid'>
@@ -31,6 +32,7 @@ h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;te
 </div>
 </div>
 <script>
+const BUILD="v5.1 • weather fallback";
 const LOC={ilioupoli:{label:"Ηλιούπολη",lat:37.9317,lon:23.7617,desc:"Βασική κατοικία",traffic:true,repeater:"145.625 MHz (SV1RVX)"},loutraki:{label:"Λουτράκι",lat:37.9756,lon:22.9847,desc:"Κορινθιακός Κόλπος",traffic:false,repeater:"145.600 MHz"},kerkyra:{label:"Κέρκυρα",lat:39.6243,lon:19.9217,desc:"Βόρειο Ιόνιο",traffic:false,repeater:"145.500 MHz (κλήση)"},xanthi:{label:"Ξάνθη",lat:41.1355,lon:24.8880,desc:"Βόρεια Ελλάδα",traffic:false,repeater:"145.575 MHz"}};
 const PRI=[["none","Καμία"],["gardening","Κηπουρική"],["work","Εργασία"],["radio","Radio"],["photo","Φωτογραφία"],["outdoor","Έξοδος"]];
 const PROJ=[["none","Κανένα"],["w124","W124 restoration"],["nas","NAS / network"],["uas","UAS / drone"],["content","Course / content creation"]];
@@ -44,6 +46,7 @@ const W124=[
 const ICON={0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",95:"⛈️",96:"⛈️",99:"⛈️"};
 const CODE={0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"};
 let loc=localStorage.getItem('md_location')||'ilioupoli', pri=localStorage.getItem('md_priority')||'none', proj=localStorage.getItem('md_project')||'none', wx=null;
+function safeWx(){return {current:{temperature_2m:21,weather_code:2,wind_speed_10m:12,uv_index:2.0,relative_humidity_2m:45},daily:{time:[new Date().toISOString().slice(0,10),new Date(Date.now()+86400000).toISOString().slice(0,10),new Date(Date.now()+2*86400000).toISOString().slice(0,10)],temperature_2m_max:[22,21,20],temperature_2m_min:[15,12,12],weather_code:[61,2,1]},_fallback:true,_fallback_msg:"Χρησιμοποιούνται προσωρινά ασφαλή δεδομένα επειδή ο καιρός δεν φορτώθηκε."}}
 function sun(lat,lon,d){const rad=Math.PI/180;const n=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const B=(360/365)*(n-81)*rad;const ET=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);const tz=2,lstm=15*tz,tc=4*(lon-lstm)+ET,decl=23.45*Math.sin(B)*rad,latR=lat*rad,cosH=-Math.tan(latR)*Math.tan(decl),H=Math.acos(Math.max(-1,Math.min(1,cosH)))/rad;const sr=12-H/15-tc/60,ss=12+H/15+(-tc/60),f=h=>`${String(Math.floor(h)).padStart(2,"0")}:${String(Math.round((h-Math.floor(h))*60)).padStart(2,"0")}`;return{rise:f(sr),set:f(ss),gold:f(ss-1)}}
 function slice(){let h=new Date().getHours();if(h<12)return"morning";if(h<17)return"midday";return"evening"}
 function scoreW124(wind,uv,temp){return W124.map(t=>{let s=t.i*10-t.r*3;if(t.w){if(wind>=30)s-=20;if(uv>=7)s-=14;if(temp>=33)s-=12;if(temp<=5)s-=15}if(t.m<=40)s+=8;if(t.m>=100)s-=5;if(t.typ==="diagnosis")s+=10;if(t.typ==="diagnosis_execution")s-=3;if(t.k==="obd1")s+=6;if(t.k==="hvac")s-=6;return {...t,s}}).sort((a,b)=>b.s-a.s)}
@@ -53,12 +56,44 @@ function renderButtons(){
  PRI.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===pri?' active':'');b.textContent=v;b.onclick=()=>{pri=k;localStorage.setItem('md_priority',k);renderButtons();update()};P.appendChild(b)});
  PROJ.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===proj?' active':'');b.textContent=v;b.onclick=()=>{proj=k;localStorage.setItem('md_project',k);renderButtons();update()};R.appendChild(b)});
  document.getElementById('locdesc').textContent=LOC[loc].desc;
+ document.getElementById('versionBadge').textContent=`Version ${BUILD}`;
 }
-async function fetchWx(){let l=LOC[loc];document.getElementById('wx').innerHTML='Φόρτωση...';try{let u=`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&current=temperature_2m,weather_code,wind_speed_10m,uv_index,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Athens&forecast_days=3`;let r=await fetch(u);wx=await r.json();renderWx();update()}catch(e){document.getElementById('wx').innerHTML='Αδυναμία φόρτωσης καιρού.'}}
-function renderWx(){let c=wx.current,d=wx.daily,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),hum=Math.round(c.relative_humidity_2m||0),code=c.weather_code||0;
-document.getElementById('wx').innerHTML=`<div style='display:flex;gap:14px;align-items:center'><div style='font-size:52px'>${ICON[code]||"☁️"}</div><div><div style='font-size:54px;font-weight:800'>${temp}°C</div><div>${CODE[code]||"—"}</div></div></div><div class='grid'><div class='stat'><div class='small'>Υγρασία</div><div>${hum}%</div></div><div class='stat'><div class='small'>UV</div><div>${uv}</div></div><div class='stat'><div class='small'>Άνεμος</div><div>${wind} km/h</div></div><div class='stat'><div class='small'>Χρυσή ώρα</div><div>${s.gold}</div></div></div>`;
-let fc='<div class="list">';for(let i=0;i<3;i++){let day=i===0?'Σήμερα':i===1?'Αύριο':new Date(d.time[i]).toLocaleDateString('el-GR',{weekday:'long'});fc+=`<div class='item'>${day}: ${ICON[d.weather_code[i]]||"☁️"} <span class='mono'>${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</span></div>`}fc+='</div>';document.getElementById('fc').innerHTML=fc;
-document.getElementById('radio').innerHTML=`<div class='row'><div>Τοπικός repeater</div><div class='right'>${LOC[loc].repeater}</div></div><div class='row'><div>Κλήση FM (2m)</div><div class='right'>145.500 MHz</div></div><div class='row'><div>Κλήση SSB (2m)</div><div class='right'>144.300 MHz</div></div>`;
+async function fetchWx(){
+ document.getElementById('wx').innerHTML='Φόρτωση...';
+ try{
+   let l=LOC[loc];
+   let u=`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&current=temperature_2m,weather_code,wind_speed_10m,uv_index,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Athens&forecast_days=3`;
+   let r=await fetch(u,{cache:"no-store"});
+   if(!r.ok) throw new Error("weather fetch failed");
+   wx=await r.json();
+   localStorage.setItem('md_last_wx', JSON.stringify(wx));
+   renderWx();
+   update();
+ }catch(e){
+   try{
+     const cached = localStorage.getItem('md_last_wx');
+     if(cached){
+       wx=JSON.parse(cached);
+       wx._fallback=true;
+       wx._fallback_msg="Χρησιμοποιούνται τα τελευταία αποθηκευμένα δεδομένα καιρού.";
+     }else{
+       wx=safeWx();
+     }
+   }catch(_){
+     wx=safeWx();
+   }
+   renderWx();
+   update();
+ }
+}
+function renderWx(){
+ let c=wx.current,d=wx.daily,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),hum=Math.round(c.relative_humidity_2m||0),code=c.weather_code||0;
+ let status = wx._fallback ? `<div class='small info'>${wx._fallback_msg}</div>` : `<div class='small ok'>Live weather loaded.</div>`;
+ document.getElementById('wx').innerHTML=`${status}<div style='display:flex;gap:14px;align-items:center;margin-top:8px'><div style='font-size:52px'>${ICON[code]||"☁️"}</div><div><div style='font-size:54px;font-weight:800'>${temp}°C</div><div>${CODE[code]||"—"}</div></div></div><div class='grid'><div class='stat'><div class='small'>Υγρασία</div><div>${hum}%</div></div><div class='stat'><div class='small'>UV</div><div>${uv}</div></div><div class='stat'><div class='small'>Άνεμος</div><div>${wind} km/h</div></div><div class='stat'><div class='small'>Χρυσή ώρα</div><div>${s.gold}</div></div></div>`;
+ let fc=`${wx._fallback ? `<div class='small info'>Η πρόγνωση χρησιμοποιεί fallback δεδομένα.</div>` : ""}<div class="list">`;
+ for(let i=0;i<3;i++){let day=i===0?'Σήμερα':i===1?'Αύριο':new Date(d.time[i]).toLocaleDateString('el-GR',{weekday:'long'});fc+=`<div class='item'>${day}: ${ICON[d.weather_code[i]]||"☁️"} <span class='mono'>${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</span></div>`}
+ fc+='</div>';document.getElementById('fc').innerHTML=fc;
+ document.getElementById('radio').innerHTML=`<div class='row'><div>Τοπικός repeater</div><div class='right'>${LOC[loc].repeater}</div></div><div class='row'><div>Κλήση FM (2m)</div><div class='right'>145.500 MHz</div></div><div class='row'><div>Κλήση SSB (2m)</div><div class='right'>144.300 MHz</div></div>`;
 }
 function alertBox(text,cls){return `<div class='item ${cls}'>${text}</div>`}
 function update(){
@@ -72,16 +107,20 @@ function update(){
  else if(pri==='photo'){dec.push("Στη φωτογραφία, η ώρα μετρά περισσότερο από την ποσότητα της ημέρας.");dec.push(`Φρόντισε να είσαι έτοιμος πριν από τη χρυσή ώρα ${s.gold}.`);best=[["Φωτογραφία",photo,"Το σημαντικότερο παράθυρο σήμερα."],["Έξοδος",outdoor,"Συνδυάζεται εύκολα."],["Εργασία",work,"Πρωινό κλειστό μπλοκ."],["Κηπουρική",garden,"Δευτερεύουσα επιλογή."]];summary+="η αξία της ημέρας είναι κυρίως στο σωστό φως.";}
  else if(pri==='outdoor'){dec.push("Αν η μέρα είναι για έξοδο, σεβάσου πρώτα το φως και τον άνεμο.");dec.push(`Πιο ασφαλές και χρήσιμο παράθυρο: ${outdoor}.`);best=[["Έξοδος",outdoor,"Κύριο παράθυρο σήμερα."],["Φωτογραφία",photo,"Αν θέλεις καλύτερη εικόνα."],["Κηπουρική",garden,"Αν σε ωφελεί."],["Εργασία",work,"Σύντομο πρωινό τακτοποίημα."]];summary+="καλό πρακτικό παράθυρο για έξοδο υπάρχει.";}
  else {dec.push("Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός.");dec.push(`Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${s.gold}.`);best=[["Εργασία",work,"Για καθαρή πρωινή συγκέντρωση."],["Έξοδος",outdoor,"Για ήπια πρακτική χρήση."],["Φωτογραφία",photo,"Για καλύτερο φως."],["Κηπουρική",garden,"Αν τελικά κινηθείς έξω."]];summary+="η μέρα είναι ισορροπημένη.";}
- if(proj==='w124'){let scored=scoreW124(wind,uv,temp),top=scored[0];dec.unshift(`W124 priority candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση τις σημερινές συνθήκες.`);best.unshift(["W124 top task",top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);summary+=` Για το W124, το πιο λογικό task σήμερα είναι: ${top.t}.`;document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span></div>`).join('');}
- else if(proj==='nas'){dec.unshift("Project focus: NAS / network. Προτίμησε συγκεντρωμένη τεχνική ενότητα χωρίς περισπασμούς.");document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι W124 restoration.</div>";}
- else if(proj==='uas'){dec.unshift("Project focus: UAS / drone. Ξεκίνα με checklist και όχι με βιαστική έξοδο.");document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι W124 restoration.</div>";}
- else if(proj==='content'){dec.unshift("Project focus: Course / content creation. Κράτα καθαρό νοητικό block και όχι διάσπαση.");document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι W124 restoration.</div>";}
- else document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";
+ if(proj==='w124'){
+   let scored=scoreW124(wind,uv,temp),top=scored[0];
+   dec.unshift(`W124 priority candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση τις σημερινές συνθήκες.`);
+   best.unshift(["W124 top task",top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);
+   summary+=` Για το W124, το πιο λογικό task σήμερα είναι: ${top.t}.`;
+   document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span></div>`).join('');
+ } else document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";
  pp.push(`Προτεραιότητα: ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"}.`);pp.push(`Project focus: ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"}.`);
+ if(wx._fallback) pp.push("Weather mode: fallback ενεργό.");
  if(uv>=7)alerts.push(alertBox("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.","alertH")); else if(uv>=4)alerts.push(alertBox("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.","alertM")); else alerts.push(alertBox("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.","alertL"));
  if(wind>=35)alerts.push(alertBox("Δυνατός άνεμος — κράτα πίσω δραστηριότητες που θέλουν σταθερότητα.","alertH")); else if(wind>=20)alerts.push(alertBox("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.","alertM")); else alerts.push(alertBox("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.","alertL"));
  let nowtxt=sl==='morning'?"Αυτή τη στιγμή ταιριάζει περισσότερο οργανωμένο πρωινό block, όχι διάσπαση.":sl==='midday'?(uv>=6?"Αυτή τη στιγμή είναι προτιμότερο να μείνεις σε εσωτερική ή ελεγχόμενη δραστηριότητα και να κρατήσεις την έξοδο για αργότερα.":"Αυτή τη στιγμή μπορείς να κάνεις σύντομη, ελεγχόμενη κίνηση, όχι όμως άσκοπη διασπορά."):`Αυτή τη στιγμή το παράθυρο πλησιάζει προς την πιο χρήσιμη απογευματινή φάση, ειδικά κοντά στις ${s.gold}.`;
  if(proj==='w124'){let top=scoreW124(wind,uv,temp)[0]; nowtxt += ` Προσωρινή καλύτερη πρόταση για το W124: ${top.t}.`;}
+ if(wx._fallback) nowtxt += " Ο καιρός δεν φορτώθηκε live, αλλά η λογική συνεχίζει με fallback.";
  document.getElementById('now').textContent=nowtxt;
  document.getElementById('dec').innerHTML=dec.map(x=>`<div class='item'>${x}</div>`).join('');
  document.getElementById('best').innerHTML=best.slice(0,4).map(x=>`<div><div class='small'>${x[0]}</div><div><strong>${x[1]}</strong></div><div class='small'>${x[2]}</div></div>`).join('');
@@ -89,7 +128,6 @@ function update(){
  document.getElementById('pp').innerHTML=pp.map(x=>`<div class='item'>${x}</div>`).join('');
  document.getElementById('slices').innerHTML=`<div><div class='small'>Πρωί</div><div><strong>${pri==='work'?'Εργασία':proj==='w124'?'Έλεγχος / planning':'Συγκέντρωση'}</strong></div><div class='small'>Καλό για καθαρή εκκίνηση.</div></div><div><div class='small'>Μεσημέρι</div><div><strong>${uv>=6?'Προσοχή':'Ελεγχόμενη χρήση'}</strong></div><div class='small'>Απόφυγε βιαστικές κινήσεις.</div></div><div><div class='small'>Απόγευμα</div><div><strong>${pri==='photo'?'Φωτογραφία':pri==='gardening'?'Κηπουρική':'Καλό παράθυρο'}</strong></div><div class='small'>Συνήθως η καλύτερη πρακτική στιγμή.</div></div>`;
  document.getElementById('summary').textContent=summary;
- document.getElementById('footerNote').textContent=`${LOC[loc].label.toUpperCase()} • ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"} • ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"} • προσωπικό dashboard v5`;
 }
 function tick(){let n=new Date();document.getElementById('date').textContent=n.toLocaleDateString('el-GR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('time').textContent=n.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'})}
 tick();renderButtons();fetchWx();setInterval(tick,60000);
