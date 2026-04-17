@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Morning Dashboard</title>
+  <style>
+    :root {
+      --bg1: #0a0e1a;
+      --bg2: #111827;
+      --bg3: #0d1117;
+      --gold: #d4af37;
+      --text: #f0ead0;
+      --muted: #9ca3af;
+      --dim: #6b7280;
+      --card: rgba(255,255,255,0.05);
+      --card-border: rgba(255,255,255,0.10);
+      --warn: #fbbf24;
+      --danger: #f87171;
+      --ok: #86efac;
+      --info: #93c5fd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(212,175,55,0.08), transparent 35%),
+        radial-gradient(circle at 80% 80%, rgba(59,130,246,0.07), transparent 35%),
+        linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 14px 34px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .date-line {
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.15;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .time-line {
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .summary-bar {
+      margin: 18px auto 0;
+      max-width: 760px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(212,175,55,0.10);
+      border: 1px solid rgba(212,175,55,0.25);
+      color: var(--text);
+      font-size: 14px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 18px 0 8px;
+    }
+    .chip {
+      border: 2px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip.active {
+      border-color: var(--gold);
+      background: rgba(212,175,55,0.16);
+      color: var(--gold);
+    }
+    .subtle-center {
+      text-align: center;
+      font-size: 12px;
+      color: var(--dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 18px 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .title {
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 14px;
+    }
+    .dim { color: var(--dim); font-size: 12px; }
+    .big-temp {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .weather-flex {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .weather-icon { font-size: 46px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 9px 10px;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .badge.ok { background: rgba(34,197,94,0.12); color: var(--ok); }
+    .badge.warn { background: rgba(251,191,36,0.12); color: var(--warn); }
+    .badge.danger { background: rgba(248,113,113,0.12); color: var(--danger); }
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 7px 0;
+      font-size: 13px;
+    }
+    .list-row:last-child { border-bottom: none; }
+    .label { color: var(--muted); }
+    .value { color: var(--text); text-align: right; }
+    .forecast-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      margin-bottom: 8px;
+    }
+    .forecast-item.today {
+      border: 1px solid rgba(212,175,55,0.30);
+      background: rgba(212,175,55,0.12);
+    }
+    .priority-box {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.30);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      padding: 12px;
+      font: inherit;
+      font-size: 15px;
+      outline: none;
+    }
+    .helper { font-size: 12px; color: var(--dim); margin-top: 8px; }
+    .section-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+    .hobby-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 8px;
+    }
+    .hobby-left { color: var(--muted); font-size: 13px; }
+    .hobby-right { text-align: right; }
+    .hobby-status { font-size: 13px; }
+    .hobby-note { font-size: 10px; color: var(--dim); }
+    .footer {
+      margin-top: 8px;
+      text-align: center;
+      color: #485266;
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .wrap { padding-bottom: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="eyebrow">Morning Dashboard</div>
+      <div class="date-line" id="dateLine">—</div>
+      <div class="time-line" id="timeLine">—</div>
+      <div class="summary-bar" id="summaryBar">Φόρτωση σύνοψης ημέρας...</div>
+    </div>
+
+    <div class="chips" id="locationChips"></div>
+    <div class="subtle-center" id="locationDesc">—</div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="title">Καιρός τώρα</div>
+        <div id="weatherBlock" class="dim">Φόρτωση...</div>
+      </div>
+      <div class="card">
+        <div class="title">3ήμερη πρόγνωση</div>
+        <div id="forecastBlock" class="dim">Φόρτωση...</div>
+        <div style="margin-top:14px; border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;">
+          <div class="stats-grid">
+            <div class="stat"><div class="stat-label">Ανατολή</div><div class="stat-value" id="sunrise">—</div></div>
+            <div class="stat"><div class="stat-label">Δύση</div><div class="stat-value" id="sunset">—</div></div>
+            <div class="stat"><div class="stat-label">Χρυσή ώρα</div><div class="stat-value" id="golden">—</div></div>
+            <div class="stat"><div class="stat-label">Σελήνη</div><div class="stat-value" id="moonPhase">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="title">Radio</div>
+        <div class="list-row"><span class="label">Τοπικός repeater</span><span class="value" id="repeater">—</span></div>
+        <div class="list-row"><span class="label">Κλήση FM (2m)</span><span class="value">145.500 MHz</span></div>
+        <div class="list-row"><span class="label">Κλήση SSB (2m)</span><span class="value">144.300 MHz</span></div>
+        <div class="list-row"><span class="label">HF συνθήκες</span><span class="value" id="hfStatus">Εκτίμηση...</span></div>
+        <div class="section-note" id="radioNote">Το block αυτό είναι ακόμη απλοποιημένο. Δείχνει χρήσιμη εκτίμηση, όχι πλήρη επαγγελματική ροή RF.</div>
+      </div>
+      <div class="card">
+        <div class="title">Hobbies — Συνθήκες</div>
+        <div id="hobbiesBlock"></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="title">Προτεραιότητα ημέρας</div>
+        <textarea id="priorityBox" class="priority-box" placeholder="Γράψε εδώ τη μία βασική προτεραιότητα της ημέρας σου..."></textarea>
+        <div class="helper">Αποθηκεύεται τοπικά στη συσκευή όσο χρησιμοποιείς το ίδιο browser.</div>
+      </div>
+      <div class="card">
+        <div class="title">Σήμερα & σκέψη</div>
+        <div style="margin-bottom:14px;">
+          <div class="stat-label" style="margin-bottom:6px;">Σαν σήμερα</div>
+          <div id="historyFact" style="font-size:13px; line-height:1.6; color:var(--muted);">—</div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;">
+          <div class="stat-label" style="margin-bottom:6px;">Σκέψη ημέρας</div>
+          <div id="quoteBlock" style="font-size:13px; line-height:1.7; color:var(--gold); font-style:italic;">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">PERSONAL MORNING BRIEFING</div>
+  </div>
+
+  <script>
+    const LOCATIONS = {
+      ilioupoli: { label: 'Ηλιούπολη', lat: 37.9317, lon: 23.7617, sea: null, desc: 'Βασική κατοικία', hamRepeater: '145.625 MHz (SV1RVX)', archery: true, traffic: true },
+      loutraki: { label: 'Λουτράκι', lat: 37.9756, lon: 22.9847, sea: 'Κορινθιακός', desc: 'Κορινθιακός Κόλπος', hamRepeater: '145.600 MHz', archery: false, traffic: false },
+      kerkyra: { label: 'Κέρκυρα', lat: 39.6243, lon: 19.9217, sea: 'Ιόνιο', desc: 'Βόρειο Ιόνιο', hamRepeater: '145.500 MHz (κλήση)', archery: false, traffic: false },
+      xanthi: { label: 'Ξάνθη', lat: 41.1355, lon: 24.8880, sea: null, desc: 'Βόρεια Ελλάδα', hamRepeater: '145.575 MHz', archery: true, traffic: false }
+    };
+
+    const WMO_CODES = {
+      0:'Αίθριος',1:'Κυρίως αίθριος',2:'Αραιή συννεφιά',3:'Συννεφιά',45:'Ομίχλη',48:'Παγετώδης ομίχλη',
+      51:'Ψιλόβροχο',53:'Μέτριο ψιλόβροχο',55:'Πυκνό ψιλόβροχο',61:'Ελαφρά βροχή',63:'Μέτρια βροχή',65:'Έντονη βροχή',
+      71:'Ελαφρά χιονόπτωση',73:'Μέτρια χιονόπτωση',75:'Έντονη χιονόπτωση',80:'Ελαφρές ριπές βροχής',81:'Μέτριες ριπές',82:'Έντονες ριπές',95:'Καταιγίδα',96:'Καταιγίδα με χαλάζι',99:'Σφοδρή καταιγίδα'
+    };
+
+    const WMO_ICON = {
+      0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌦️',63:'🌧️',65:'⛈️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'
+    };
+
+    const QUOTES = [
+      '«Η καλύτερη στιγμή να φυτέψεις ένα δέντρο ήταν 20 χρόνια πριν. Η δεύτερη καλύτερη είναι τώρα.» — Κινεζική παροιμία',
+      '«Φωτογράφισε αυτό που αγαπάς και αγάπα αυτό που φωτογραφίζεις.» — Dorothea Lange',
+      '«Η τοξοβολία διδάσκει υπομονή: το βέλος φτάνει στον στόχο μόνο αν πρώτα ηρεμήσει ο τοξότης.»',
+      '«Κάθε πρωί είναι μια νέα ευκαιρία να κάνεις κάτι χρήσιμο.»',
+      '«Ο ραδιοερασιτεχνισμός είναι η επιστήμη που μπορείς να αγγίξεις με τα χέρια σου.»',
+      '«Ο κήπος είναι ο καθρέφτης της ψυχής σου — φρόντισέ τον.»',
+      '«73 de σύμπαν — good DX και καθαρό μυαλό.»'
+    ];
+
+    const HISTORY_FACTS = [
+      '1452: Γεννήθηκε ο Λεονάρντο ντα Βίντσι, μία από τις μεγάλες μορφές της Αναγέννησης.',
+      '1906: Ο Guglielmo Marconi τιμάται με Νόμπελ για τη συμβολή του στο ραδιόφωνο.',
+      '1969: Το Apollo 11 εκτοξεύεται με προορισμό τη Σελήνη.',
+      '1827: Ο Beethoven ολοκληρώνει την 9η Συμφωνία.',
+      '1543: Ο Κοπέρνικος δημοσιεύει την ηλιοκεντρική θεωρία.',
+      '1888: Η Kodak αλλάζει τη φωτογραφία για τον απλό χρήστη.',
+      '1932: Η Amelia Earhart διασχίζει μόνη της τον Ατλαντικό.',
+      '1865: Ο Abraham Lincoln δολοφονείται στην Ουάσιγκτον.'
+    ];
+
+    const dayNames = ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+    const monthNames = ['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'];
+
+    const state = {
+      location: localStorage.getItem('md_location') || 'ilioupoli',
+      priority: localStorage.getItem('md_priority') || '',
+      weather: null,
+      now: new Date()
+    };
+
+    function getMoonPhase(date) {
+      const known = new Date(2000, 0, 6);
+      const diff = (date - known) / (1000 * 60 * 60 * 24);
+      const cycle = 29.53;
+      const phase = ((diff % cycle) + cycle) % cycle;
+      if (phase < 1.84566) return 'Νέα Σελήνη';
+      if (phase < 5.53699) return 'Αυξανόμενη Ημισέληνος';
+      if (phase < 9.22831) return 'Πρώτο Τέταρτο';
+      if (phase < 12.91963) return 'Αυξανόμενη Αμφίκυρτος';
+      if (phase < 16.61096) return 'Πανσέληνος';
+      if (phase < 20.30228) return 'Φθίνουσα Αμφίκυρτος';
+      if (phase < 23.99361) return 'Τελευταίο Τέταρτο';
+      if (phase < 27.68493) return 'Φθίνουσα Ημισέληνος';
+      return 'Νέα Σελήνη';
+    }
+
+    function getSunTimes(lat, lon, date) {
+      const rad = Math.PI / 180;
+      const d = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+      const B = (360 / 365) * (d - 81) * rad;
+      const ET = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+      const tz = 2;
+      const lstm = 15 * tz;
+      const tc = 4 * (lon - lstm) + ET;
+      const declination = 23.45 * Math.sin(B) * rad;
+      const latR = lat * rad;
+      const cosH = -Math.tan(latR) * Math.tan(declination);
+      const H = Math.acos(Math.max(-1, Math.min(1, cosH))) / rad;
+      const sunrise = 12 - H / 15 - tc / 60;
+      const sunset = 12 + H / 15 - tc / 60;
+      const fmt = (h) => {
+        const hh = Math.floor(h);
+        const mm = Math.round((h - hh) * 60);
+        return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+      };
+      return { sunrise: fmt(sunrise), sunset: fmt(sunset), golden: fmt(sunset - 1) };
+    }
+
+    function beaufortDesc(kmh) {
+      if (kmh < 1) return '0 – Νηνεμία';
+      if (kmh < 6) return '1 – Σχεδόν νηνεμία';
+      if (kmh < 12) return '2 – Ασθενής αύρα';
+      if (kmh < 20) return '3 – Ελαφρός άνεμος';
+      if (kmh < 29) return '4 – Μέτριος άνεμος';
+      if (kmh < 39) return '5 – Αρκετά δυνατός';
+      if (kmh < 50) return '6 – Δυνατός άνεμος';
+      if (kmh < 62) return '7 – Σφοδρός άνεμος';
+      return '8+ – Θυελλώδης';
+    }
+
+    function getSummary(cur, loc) {
+      if (!cur) return 'Δεν υπάρχουν ακόμη δεδομένα καιρού.';
+      const wind = cur.windspeed_10m || 0;
+      const uv = cur.uv_index || 0;
+      const t = cur.temperature_2m;
+      if (wind >= 35) return `Ισχυρός άνεμος στη ${loc.label} — όχι καλή μέρα για δραστηριότητες που θέλουν σταθερές συνθήκες.`;
+      if (uv >= 8) return `Πολύ έντονο φως και υψηλό UV στη ${loc.label} — εξωτερικές εργασίες καλύτερα νωρίς ή αργά.`;
+      if (t >= 32) return `Ζεστή μέρα στη ${loc.label} — απόφυγε τις βαριές εξωτερικές κινήσεις στο μεσημέρι.`;
+      if (wind < 20 && uv < 7) return `Ισορροπημένες συνθήκες στη ${loc.label} — καλή μέρα για οργανωμένη έξοδο ή συγκροτημένη δουλειά.`;
+      return `Μέτριες συνθήκες στη ${loc.label} — η μέρα θέλει λίγο έλεγχο στον χρόνο και στις δραστηριότητες.`;
+    }
+
+    function radioEstimate(cur) {
+      if (!cur) return 'Δεν υπάρχουν δεδομένα ακόμη';
+      const wind = cur.windspeed_10m || 0;
+      const code = cur.weathercode || 0;
+      if ([95,96,99].includes(code)) return 'Καταιγίδα — κακή στιγμή για σοβαρή εξωτερική ραδιοδραστηριότητα';
+      if (wind < 20) return 'Σταθερές συνθήκες — καλό παράθυρο για άνετη δραστηριότητα';
+      if (wind < 35) return 'Μέτριες συνθήκες — γίνεται, αλλά όχι ιδανικά';
+      return 'Αυξημένη δυσκολία λόγω ανέμου';
+    }
+
+    function hobbyAssessment(name, cur, loc, moonName) {
+      if (!cur) return { status: '—', note: 'Δεν υπάρχουν ακόμη δεδομένα' };
+      const wind = cur.windspeed_10m || 0;
+      const uv = cur.uv_index || 0;
+      const temp = cur.temperature_2m || 0;
+      switch (name) {
+        case 'Φωτογραφία':
+          return {
+            status: uv < 3 ? 'Μαλακό φως' : uv < 7 ? 'Καλό φως' : 'Έντονο φως',
+            note: 'Η καλύτερη στιγμή συνήθως είναι κοντά στη χρυσή ώρα.'
+          };
+        case 'Τοξοβολία':
+          return {
+            status: wind < 20 ? 'Ιδανικό' : wind < 35 ? 'Προσοχή' : 'Ακατάλληλο',
+            note: `Άνεμος: ${Math.round(wind)} km/h`
+          };
+        case 'Κηπουρική':
+          return {
+            status: temp < 10 ? 'Κρύο' : temp > 35 ? 'Καύσωνας' : 'Καλές συνθήκες',
+            note: moonName
+          };
+        case 'Ραδιοερασιτεχνισμός':
+          return {
+            status: wind < 20 ? 'Άνετα' : wind < 35 ? 'Μέτριο' : 'Δύσκολο έξω',
+            note: 'Για πλήρη εικόνα RF θα χρειαστεί αργότερα πραγματική πηγή propagation.'
+          };
+        case 'Θάλασσα':
+          return {
+            status: wind < 20 ? 'Καλή εικόνα' : wind < 35 ? 'Μέτριο' : 'Όχι καλή ιδέα',
+            note: loc.sea || 'Δεν αφορά την περιοχή'
+          };
+      }
+      return { status: '—', note: '' };
+    }
+
+    function renderHeader() {
+      const now = state.now;
+      document.getElementById('dateLine').textContent = `${dayNames[now.getDay()]}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+      document.getElementById('timeLine').textContent = now.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('historyFact').textContent = HISTORY_FACTS[now.getDate() % HISTORY_FACTS.length];
+      document.getElementById('quoteBlock').textContent = QUOTES[now.getDate() % QUOTES.length];
+    }
+
+    function renderLocationChips() {
+      const box = document.getElementById('locationChips');
+      box.innerHTML = '';
+      Object.entries(LOCATIONS).forEach(([key, loc]) => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (key === state.location ? ' active' : '');
+        btn.textContent = loc.label;
+        btn.onclick = () => {
+          state.location = key;
+          localStorage.setItem('md_location', key);
+          renderLocationChips();
+          renderStaticBits();
+          loadWeather();
+        };
+        box.appendChild(btn);
+      });
+    }
+
+    function renderStaticBits() {
+      const loc = LOCATIONS[state.location];
+      document.getElementById('locationDesc').textContent = loc.desc;
+      document.getElementById('repeater').textContent = loc.hamRepeater;
+      const sun = getSunTimes(loc.lat, loc.lon, state.now);
+      document.getElementById('sunrise').textContent = sun.sunrise;
+      document.getElementById('sunset').textContent = sun.sunset;
+      document.getElementById('golden').textContent = sun.golden;
+      document.getElementById('moonPhase').textContent = getMoonPhase(state.now);
+      document.getElementById('priorityBox').value = state.priority;
+    }
+
+    function renderWeather() {
+      const loc = LOCATIONS[state.location];
+      const block = document.getElementById('weatherBlock');
+      const cur = state.weather?.current;
+      document.getElementById('summaryBar').textContent = getSummary(cur, loc);
+      document.getElementById('hfStatus').textContent = radioEstimate(cur);
+      if (!cur) {
+        block.className = 'dim';
+        block.textContent = 'Δεν φορτώθηκαν δεδομένα.';
+        return;
+      }
+      const wind = Math.round(cur.windspeed_10m || 0);
+      const code = cur.weathercode ?? 0;
+      const bft = beaufortDesc(wind);
+      let badgeClass = 'ok';
+      let archeryText = 'Ιδανικές συνθήκες';
+      if (wind >= 35) { badgeClass = 'danger'; archeryText = 'Ακατάλληλο'; }
+      else if (wind >= 20) { badgeClass = 'warn'; archeryText = 'Μέτριος άνεμος'; }
+
+      block.innerHTML = `
+        <div class="weather-flex">
+          <div class="weather-icon">${WMO_ICON[code] || '☁️'}</div>
+          <div>
+            <div class="big-temp">${Math.round(cur.temperature_2m)}°C</div>
+            <div class="dim">${WMO_CODES[code] || '—'}</div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><div class="stat-label">Υγρασία</div><div class="stat-value">${cur.relativehumidity_2m ?? '—'}%</div></div>
+          <div class="stat"><div class="stat-label">UV Index</div><div class="stat-value">${cur.uv_index ?? '—'}</div></div>
+          <div class="stat"><div class="stat-label">Άνεμος</div><div class="stat-value">${wind} km/h</div></div>
+          <div class="stat"><div class="stat-label">Beaufort</div><div class="stat-value">${bft.split('–')[0].trim()}</div></div>
+        </div>
+        <div class="section-note">${bft}</div>
+        ${loc.archery ? `<div class="badge ${badgeClass}">Τοξοβολία: ${archeryText}</div>` : ''}
+        ${loc.sea ? `<div class="badge ${badgeClass}">${loc.sea}: ${bft}</div>` : ''}
+      `;
+    }
+
+    function renderForecast() {
+      const block = document.getElementById('forecastBlock');
+      const daily = state.weather?.daily;
+      if (!daily || !daily.time) {
+        block.className = 'dim';
+        block.textContent = 'Δεν υπάρχουν διαθέσιμα δεδομένα πρόγνωσης.';
+        return;
+      }
+      const items = [0,1,2].map(i => {
+        const date = new Date(daily.time[i]);
+        const label = i === 0 ? 'Σήμερα' : i === 1 ? 'Αύριο' : dayNames[date.getDay()];
+        return `
+          <div class="forecast-item ${i===0 ? 'today' : ''}">
+            <div style="min-width:76px; color:${i===0 ? 'var(--gold)' : 'var(--muted)'}">${label}</div>
+            <div style="font-size:22px;">${WMO_ICON[daily.weathercode[i]] || '☁️'}</div>
+            <div style="text-align:right; font-size:13px;">
+              <span style="color:var(--danger)">${Math.round(daily.temperature_2m_max[i])}°</span>
+              <span style="color:var(--dim)"> / </span>
+              <span style="color:var(--info)">${Math.round(daily.temperature_2m_min[i])}°</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+      block.className = '';
+      block.innerHTML = items;
+    }
+
+    function renderHobbies() {
+      const block = document.getElementById('hobbiesBlock');
+      const loc = LOCATIONS[state.location];
+      const moon = getMoonPhase(state.now);
+      const cur = state.weather?.current;
+      const hobbies = ['Φωτογραφία', ...(loc.archery ? ['Τοξοβολία'] : []), 'Κηπουρική', 'Ραδιοερασιτεχνισμός', ...(loc.sea ? ['Θάλασσα'] : [])];
+      block.innerHTML = hobbies.map(name => {
+        const h = hobbyAssessment(name, cur, loc, moon);
+        return `
+          <div class="hobby-row">
+            <div class="hobby-left">${name}</div>
+            <div class="hobby-right">
+              <div class="hobby-status">${h.status}</div>
+              <div class="hobby-note">${h.note}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadWeather() {
+      const loc = LOCATIONS[state.location];
+      document.getElementById('weatherBlock').textContent = 'Φόρτωση...';
+      document.getElementById('forecastBlock').textContent = 'Φόρτωση...';
+      document.getElementById('summaryBar').textContent = 'Ανάκτηση δεδομένων ημέρας...';
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,weathercode,windspeed_10m,uv_index,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Europe/Athens&forecast_days=3`;
+        const res = await fetch(url);
+        const data = await res.json();
+        state.weather = data;
+      } catch (e) {
+        state.weather = null;
+      }
+      renderWeather();
+      renderForecast();
+      renderHobbies();
+    }
+
+    function initPriority() {
+      const box = document.getElementById('priorityBox');
+      box.value = state.priority;
+      box.addEventListener('input', () => {
+        state.priority = box.value;
+        localStorage.setItem('md_priority', state.priority);
+      });
+    }
+
+    function tick() {
+      state.now = new Date();
+      renderHeader();
+      renderStaticBits();
+      renderHobbies();
+    }
+
+    function init() {
+      renderHeader();
+      renderLocationChips();
+      renderStaticBits();
+      initPriority();
+      loadWeather();
+      setInterval(tick, 60000);
+    }
+
+    init();
+  </script>
+</body>
+</html>
