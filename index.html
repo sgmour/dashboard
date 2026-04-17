@@ -1,667 +1,96 @@
-<!DOCTYPE html>
-<html lang="el">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Morning Dashboard v3 Full</title>
+<!doctype html><html lang='el'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Morning Dashboard v5</title>
 <style>
-  :root{
-    --bg1:#19304a;
-    --bg2:#35506a;
-    --glow1:rgba(255,223,145,.11);
-    --glow2:rgba(126,177,255,.13);
-    --panel:rgba(255,255,255,0.12);
-    --panel2:rgba(255,255,255,0.09);
-    --panel3:rgba(255,255,255,0.07);
-    --border:rgba(255,255,255,0.16);
-    --text:#f5f1e8;
-    --muted:#d5dde6;
-    --dim:#afbcc8;
-    --gold:#d7b360;
-    --green:#73c996;
-    --warn:#f0be70;
-    --danger:#ec8484;
-    --shadow:0 12px 34px rgba(0,0,0,.22);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    min-height:100vh;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    color:var(--text);
-    background:
-      radial-gradient(circle at 16% 16%, var(--glow1), transparent 30%),
-      radial-gradient(circle at 86% 14%, var(--glow2), transparent 26%),
-      linear-gradient(180deg, var(--bg2), var(--bg1) 58%, #182b42);
-  }
-  .wrap{max-width:1220px;margin:0 auto;padding:22px 18px 44px}
-  .header{text-align:center;margin-bottom:14px}
-  .eyebrow{
-    color:var(--gold); letter-spacing:.34em; text-transform:uppercase;
-    font-size:12px; margin-bottom:10px;
-  }
-  .date{
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(30px,5vw,56px);
-    line-height:1.05; font-weight:700; color:#f7efdb; margin-bottom:8px;
-  }
-  .time{
-    color:var(--gold); font-size:clamp(24px,3vw,34px); font-weight:800; margin-bottom:12px;
-  }
-  .summary{
-    max-width:900px; margin:0 auto 14px;
-    padding:13px 16px; border-radius:16px;
-    background:rgba(255,221,136,.10);
-    border:1px solid rgba(215,179,96,.38);
-    color:#f8e8bd; font-size:18px; box-shadow:var(--shadow);
-  }
-  .location-buttons,.priority-buttons{
-    display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin:12px 0 6px;
-  }
-  .pill{
-    padding:10px 18px; border-radius:999px; border:1px solid var(--border);
-    background:rgba(0,0,0,.12); color:var(--muted); cursor:pointer; font-size:16px;
-    transition:.18s ease; backdrop-filter: blur(8px);
-  }
-  .pill.active{
-    background:rgba(215,179,96,.18);
-    border-color:rgba(215,179,96,.75);
-    color:#fff1cc;
-  }
-  .subnote{
-    text-align:center; color:var(--dim); font-size:12px;
-    letter-spacing:.22em; text-transform:uppercase; margin-bottom:16px;
-  }
-
-  .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px}
-  .card{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:22px; padding:18px 18px 16px;
-    box-shadow:var(--shadow); backdrop-filter: blur(10px);
-  }
-  .card h3{
-    margin:0 0 14px; color:var(--gold);
-    font-size:13px; letter-spacing:.28em; text-transform:uppercase; font-weight:800;
-  }
-
-  .decision-card{background:rgba(255,255,255,.13)}
-  .decision-list{display:flex; flex-direction:column; gap:10px}
-  .decision-item{
-    padding:12px 14px; border-radius:14px; background:var(--panel2); font-size:19px; line-height:1.35;
-  }
-
-  .best-window{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px;
-  }
-  .best-item{
-    background:var(--panel2); border-radius:14px; padding:12px 14px;
-  }
-  .best-item .label{
-    color:var(--dim); font-size:12px; text-transform:uppercase; letter-spacing:.14em; margin-bottom:6px;
-  }
-  .best-item .value{font-size:22px; font-weight:800}
-  .best-item .note{font-size:14px; color:var(--muted); margin-top:6px; line-height:1.35}
-
-  .alert-high,.alert-medium,.alert-low{
-    border-left:4px solid transparent;
-  }
-  .alert-high{border-left-color:var(--danger)}
-  .alert-medium{border-left-color:var(--warn)}
-  .alert-low{border-left-color:var(--green)}
-
-  .weather-top{display:flex; align-items:center; gap:16px; margin-bottom:12px}
-  .weather-icon{font-size:56px; width:60px; text-align:center}
-  .big-temp{font-size:60px; line-height:1; font-weight:800}
-  .wdesc{font-size:18px; color:var(--muted)}
-  .stats-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-  .stat{background:var(--panel3); border-radius:14px; padding:12px}
-  .stat .label{font-size:12px; color:var(--dim); letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px}
-  .stat .value{font-size:22px; font-weight:700}
-  .smallline{margin-top:10px; font-size:18px; color:var(--muted)}
-  .tag{
-    display:inline-block; margin-top:12px; padding:8px 12px; border-radius:999px; font-size:15px; font-weight:700;
-    border:1px solid transparent;
-  }
-  .tag.green{background:rgba(115,201,150,.16); color:#d4f8df; border-color:rgba(115,201,150,.32)}
-  .tag.blue{background:rgba(145,190,255,.16); color:#e3efff; border-color:rgba(145,190,255,.32)}
-  .tag.warn{background:rgba(240,190,112,.18); color:#ffe8bf; border-color:rgba(240,190,112,.32)}
-  .tag.red{background:rgba(236,132,132,.18); color:#ffd9d9; border-color:rgba(236,132,132,.32)}
-
-  .forecast-list{display:flex; flex-direction:column; gap:10px}
-  .forecast-item{
-    display:grid; grid-template-columns:120px 1fr 90px; align-items:center; gap:10px;
-    padding:12px 14px; border-radius:14px; background:var(--panel3);
-  }
-  .forecast-item.today{
-    background:rgba(215,179,96,.12); border:1px solid rgba(215,179,96,.34)
-  }
-  .forecast-item .day{font-size:18px}
-  .forecast-item .ficon{text-align:center; font-size:28px}
-  .forecast-item .temps{text-align:right; font-size:18px}
-  .forecast-item .max{color:#ff9e9e; font-weight:700}
-  .forecast-item .min{color:#c9ddff}
-
-  .divider{height:1px; background:rgba(255,255,255,.10); margin:14px 0}
-  .mini-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-
-  .row{
-    display:grid; grid-template-columns:1.2fr 1fr; gap:12px;
-    padding:10px 0; border-bottom:1px solid rgba(255,255,255,.08)
-  }
-  .row:last-child{border-bottom:none}
-  .l{color:var(--muted); font-size:18px}
-  .r{text-align:right; font-size:18px; font-weight:700}
-
-  .hobby-row{
-    display:grid; grid-template-columns:1.1fr 1fr; gap:12px;
-    align-items:center; background:var(--panel3); border-radius:14px; padding:12px 14px; margin-bottom:10px;
-  }
-  .hobby-left{font-size:20px; color:var(--muted)}
-  .hobby-right{text-align:right}
-  .hobby-status{font-size:21px; font-weight:800}
-  .hobby-note{font-size:14px; color:var(--dim)}
-
-  .loading{color:var(--muted)}
-  .footer-note{text-align:center; color:var(--dim); font-size:13px; letter-spacing:.18em; margin-top:8px}
-
-  @media (max-width:980px){
-    .grid{grid-template-columns:1fr}
-  }
-  @media (max-width:620px){
-    .best-window,.stats-grid,.mini-grid{grid-template-columns:1fr}
-    .forecast-item{grid-template-columns:1fr 60px 80px}
-    .row,.hobby-row{grid-template-columns:1fr}
-    .r,.hobby-right{text-align:left}
-    .summary{font-size:16px}
-  }
+:root{--bg1:#1b3148;--bg2:#3a5670;--p:rgba(255,255,255,.12);--p2:rgba(255,255,255,.09);--b:rgba(255,255,255,.16);--t:#f5f1e8;--m:#d5dde6;--d:#afbcc8;--g:#d7b360;--gr:#73c996;--w:#f0be70;--r:#ec8484}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,Arial;color:var(--t);background:linear-gradient(180deg,var(--bg2),var(--bg1));padding:18px}
+.wrap{max-width:1240px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--p);border:1px solid var(--b);border-radius:22px;padding:16px;margin:0 0 16px}.list{display:flex;flex-direction:column;gap:10px}.item{background:var(--p2);border-radius:14px;padding:12px 14px;line-height:1.35}.pill{padding:8px 12px;border-radius:999px;border:1px solid var(--b);background:rgba(0,0,0,.12);color:var(--m);display:inline-block;margin:4px;cursor:pointer}.active{background:rgba(215,179,96,.18);color:#fff1cc}.head{text-align:center}.sum{max-width:920px;margin:0 auto 14px;padding:13px 16px;border-radius:16px;background:rgba(255,221,136,.10);border:1px solid rgba(215,179,96,.38);color:#f8e8bd}.best{display:grid;grid-template-columns:1fr 1fr;gap:10px}.best>div,.slice>div,.stat{background:var(--p2);border-radius:14px;padding:12px}.small{color:var(--d);font-size:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}.row:last-child{border-bottom:none}.right{text-align:right}.alertH{border-left:4px solid var(--r)}.alertM{border-left:4px solid var(--w)}.alertL{border-left:4px solid var(--gr)}.slices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}@media(max-width:980px){.grid,.best,.slices{grid-template-columns:1fr}}
+h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;text-transform:uppercase}
 </style>
-</head>
-<body>
-<div class="wrap">
-  <div class="header">
-    <div class="eyebrow">Morning Dashboard</div>
-    <div class="date" id="dateText">—</div>
-    <div class="time" id="timeText">—</div>
-    <div class="summary" id="summaryText">Φόρτωση...</div>
+<body><div class='wrap'>
+<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div>
+<div id='locs'></div><div class='small' id='locdesc'></div><div id='pris'></div><div class='small'>Προτεραιότητα ημέρας</div><div id='projs'></div><div class='small'>Project focus</div></div>
 
-    <div class="location-buttons" id="locationButtons"></div>
-    <div class="subnote" id="locationDesc">—</div>
-
-    <div class="priority-buttons" id="priorityButtons"></div>
-    <div class="subnote">Προτεραιότητα ημέρας</div>
-  </div>
-
-  <div class="grid">
-    <div class="card decision-card">
-      <h3>Τι να κάνεις σήμερα</h3>
-      <div class="decision-list" id="decisionList"></div>
-    </div>
-    <div class="card">
-      <h3>Καλύτερο παράθυρο σήμερα</h3>
-      <div class="best-window" id="bestWindow"></div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Alerts / Προσοχές</h3>
-      <div class="decision-list" id="alertsList"></div>
-    </div>
-    <div class="card">
-      <h3>Προτεραιότητα ημέρας</h3>
-      <div class="decision-list" id="priorityPanel"></div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Καιρός τώρα</h3>
-      <div id="weatherNow"><div class="loading">Φόρτωση...</div></div>
-    </div>
-    <div class="card">
-      <h3>3ήμερη πρόγνωση</h3>
-      <div id="forecastBlock"><div class="loading">Φόρτωση...</div></div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Radio</h3>
-      <div id="radioBlock"></div>
-      <div class="divider"></div>
-      <div class="smallline" id="radioFoot"></div>
-    </div>
-    <div class="card">
-      <h3>Hobbies — Συνθήκες</h3>
-      <div id="hobbiesBlock"></div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Σήμερα & Σκέψη</h3>
-      <div class="smallline" id="historyText"></div>
-      <div class="divider"></div>
-      <div class="smallline" id="quoteText"></div>
-    </div>
-    <div class="card">
-      <h3>Σημείωση v3</h3>
-      <div class="smallline">Η λογική βελτιώθηκε ώστε η προτεραιότητα να αλλάζει όχι μόνο το κείμενο, αλλά και τη βαρύτητα των αποφάσεων και των χρονικών παραθύρων.</div>
-    </div>
-  </div>
-
-  <div class="footer-note" id="footerNote">—</div>
+<div class='grid'>
+<div class='card'><h3>Action Block — Τώρα</h3><div class='item' id='now'>Φόρτωση...</div><h3 style='margin-top:14px'>Τι να κάνεις σήμερα</h3><div class='list' id='dec'></div></div>
+<div class='card'><h3>Καλύτερο παράθυρο σήμερα</h3><div class='best' id='best'></div><h3 style='margin-top:14px'>Χρονικά τμήματα ημέρας</h3><div class='slices' id='slices'></div></div>
 </div>
 
+<div class='grid'>
+<div class='card'><h3>Alerts / Προσοχές</h3><div class='list' id='alerts'></div></div>
+<div class='card'><h3>Προτεραιότητα & Project</h3><div class='list' id='pp'></div></div>
+</div>
+
+<div class='grid'>
+<div class='card'><h3>W124 Decision Matrix</h3><div class='list' id='w124'></div></div>
+<div class='card'><h3>Καιρός τώρα</h3><div id='wx'>Φόρτωση...</div></div>
+</div>
+
+<div class='grid'>
+<div class='card'><h3>3ήμερη πρόγνωση</h3><div id='fc'>Φόρτωση...</div></div>
+<div class='card'><h3>Radio</h3><div id='radio'></div></div>
+</div>
+</div>
 <script>
-const LOCATIONS = {
-  ilioupoli: { label:"Ηλιούπολη", lat:37.9317, lon:23.7617, sea:null, archery:true, traffic:true, desc:"Βασική κατοικία", hamRepeater:"145.625 MHz (SV1RVX)" },
-  loutraki: { label:"Λουτράκι", lat:37.9756, lon:22.9847, sea:"Κορινθιακός", archery:false, traffic:false, desc:"Κορινθιακός Κόλπος", hamRepeater:"145.600 MHz" },
-  kerkyra: { label:"Κέρκυρα", lat:39.6243, lon:19.9217, sea:"Ιόνιο", archery:false, traffic:false, desc:"Βόρειο Ιόνιο", hamRepeater:"145.500 MHz (κλήση)" },
-  xanthi: { label:"Ξάνθη", lat:41.1355, lon:24.8880, sea:null, archery:true, traffic:false, desc:"Βόρεια Ελλάδα", hamRepeater:"145.575 MHz" }
-};
-const PRIORITIES = [
-  {key:"none",label:"Καμία"},
-  {key:"gardening",label:"Κηπουρική"},
-  {key:"work",label:"Εργασία"},
-  {key:"radio",label:"Radio"},
-  {key:"photo",label:"Φωτογραφία"},
-  {key:"outdoor",label:"Έξοδος"}
+const LOC={ilioupoli:{label:"Ηλιούπολη",lat:37.9317,lon:23.7617,desc:"Βασική κατοικία",traffic:true,repeater:"145.625 MHz (SV1RVX)"},loutraki:{label:"Λουτράκι",lat:37.9756,lon:22.9847,desc:"Κορινθιακός Κόλπος",traffic:false,repeater:"145.600 MHz"},kerkyra:{label:"Κέρκυρα",lat:39.6243,lon:19.9217,desc:"Βόρειο Ιόνιο",traffic:false,repeater:"145.500 MHz (κλήση)"},xanthi:{label:"Ξάνθη",lat:41.1355,lon:24.8880,desc:"Βόρεια Ελλάδα",traffic:false,repeater:"145.575 MHz"}};
+const PRI=[["none","Καμία"],["gardening","Κηπουρική"],["work","Εργασία"],["radio","Radio"],["photo","Φωτογραφία"],["outdoor","Έξοδος"]];
+const PROJ=[["none","Κανένα"],["w124","W124 restoration"],["nas","NAS / network"],["uas","UAS / drone"],["content","Course / content creation"]];
+const W124=[
+{k:"fluids",t:"Πλύσιμο, έλεγχος & συμπλήρωση υγρών",m:40,i:7,r:3,w:true,typ:"maintenance",n:"Χαμηλότερου ρίσκου, καλό για πρακτική πρόοδο."},
+{k:"electrics",t:"Έλεγχος ηλεκτρικού συστήματος",m:90,i:8,r:7,w:true,typ:"diagnosis_execution",n:"Θέλει ήσυχο χρόνο και καθαρό μυαλό."},
+{k:"oils",t:"Αλλαγή λαδιών / υδραυλικό τιμόνι",m:100,i:9,r:6,w:true,typ:"maintenance",n:"Θέλει καλό παράθυρο και προετοιμασία."},
+{k:"hvac",t:"Έλεγχος-συντήρηση HVAC",m:120,i:9,r:8,w:true,typ:"diagnosis_execution",n:"Να ξεκινά πρώτα ως diagnosis, όχι τυφλό intervention."},
+{k:"obd1",t:"Χειροκίνητη ανάγνωση OBD I / κωδίκων",m:30,i:8,r:5,w:false,typ:"diagnosis",n:"Ασφαλέστερο βήμα πριν από πιο βαριά παρέμβαση."}
 ];
-const WMO_CODES = {0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"};
-const WMO_ICON = {0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",95:"⛈️",96:"⛈️",99:"⛈️"};
-const HISTORY_FACTS = [
- "1452: Γεννήθηκε ο Λεονάρντο ντα Βίντσι.",
- "1906: Ο Marconi συνδέεται με την επανάσταση του ραδιοφώνου.",
- "1969: Το Apollo 11 εκτοξεύεται προς τη Σελήνη.",
- "1827: Ο Beethoven ολοκληρώνει την 9η Συμφωνία.",
- "1543: Ο Κοπέρνικος δημοσιεύει την ηλιοκεντρική θεωρία.",
- "1888: Η Kodak αλλάζει τη φωτογραφία.",
- "1932: Η Amelia Earhart διασχίζει μόνη τον Ατλαντικό.",
- "1865: Δολοφονείται ο Abraham Lincoln."
-];
-const QUOTES = [
- "Η καλύτερη στιγμή να φυτέψεις ένα δέντρο ήταν πριν χρόνια. Η δεύτερη καλύτερη είναι τώρα.",
- "Φωτογράφισε αυτό που αγαπάς και αγάπα αυτό που φωτογραφίζεις.",
- "Η τοξοβολία θέλει ηρεμία πριν από το βέλος.",
- "Κάθε πρωί είναι νέα ευκαιρία για σωστή κίνηση.",
- "Ο ραδιοερασιτεχνισμός είναι γνώση που την αγγίζεις.",
- "Ο κήπος δείχνει πού πήγε η φροντίδα σου.",
- "Good DX και καθαρό μυαλό στην ίδια μέρα."
-];
-
-let currentLocation = localStorage.getItem("md_location") || "ilioupoli";
-let currentPriority = localStorage.getItem("md_priority") || "none";
-let weatherData = null;
-
-function beaufortDesc(kmh){
-  if (kmh < 1) return "0 – Νηνεμία";
-  if (kmh < 6) return "1 – Σχεδόν νηνεμία";
-  if (kmh < 12) return "2 – Ασθενής αύρα";
-  if (kmh < 20) return "3 – Ελαφρός άνεμος";
-  if (kmh < 29) return "4 – Μέτριος άνεμος";
-  if (kmh < 39) return "5 – Αρκετά δυνατός";
-  if (kmh < 50) return "6 – Δυνατός άνεμος";
-  if (kmh < 62) return "7 – Σφοδρός άνεμος";
-  return "8+ – Θυελλώδης";
+const ICON={0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",95:"⛈️",96:"⛈️",99:"⛈️"};
+const CODE={0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"};
+let loc=localStorage.getItem('md_location')||'ilioupoli', pri=localStorage.getItem('md_priority')||'none', proj=localStorage.getItem('md_project')||'none', wx=null;
+function sun(lat,lon,d){const rad=Math.PI/180;const n=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const B=(360/365)*(n-81)*rad;const ET=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);const tz=2,lstm=15*tz,tc=4*(lon-lstm)+ET,decl=23.45*Math.sin(B)*rad,latR=lat*rad,cosH=-Math.tan(latR)*Math.tan(decl),H=Math.acos(Math.max(-1,Math.min(1,cosH)))/rad;const sr=12-H/15-tc/60,ss=12+H/15+(-tc/60),f=h=>`${String(Math.floor(h)).padStart(2,"0")}:${String(Math.round((h-Math.floor(h))*60)).padStart(2,"0")}`;return{rise:f(sr),set:f(ss),gold:f(ss-1)}}
+function slice(){let h=new Date().getHours();if(h<12)return"morning";if(h<17)return"midday";return"evening"}
+function scoreW124(wind,uv,temp){return W124.map(t=>{let s=t.i*10-t.r*3;if(t.w){if(wind>=30)s-=20;if(uv>=7)s-=14;if(temp>=33)s-=12;if(temp<=5)s-=15}if(t.m<=40)s+=8;if(t.m>=100)s-=5;if(t.typ==="diagnosis")s+=10;if(t.typ==="diagnosis_execution")s-=3;if(t.k==="obd1")s+=6;if(t.k==="hvac")s-=6;return {...t,s}}).sort((a,b)=>b.s-a.s)}
+function renderButtons(){
+ let L=document.getElementById('locs'),P=document.getElementById('pris'),R=document.getElementById('projs');L.innerHTML='';P.innerHTML='';R.innerHTML='';
+ Object.entries(LOC).forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===loc?' active':'');b.textContent=v.label;b.onclick=()=>{loc=k;localStorage.setItem('md_location',k);renderButtons();fetchWx()};L.appendChild(b)});
+ PRI.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===pri?' active':'');b.textContent=v;b.onclick=()=>{pri=k;localStorage.setItem('md_priority',k);renderButtons();update()};P.appendChild(b)});
+ PROJ.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===proj?' active':'');b.textContent=v;b.onclick=()=>{proj=k;localStorage.setItem('md_project',k);renderButtons();update()};R.appendChild(b)});
+ document.getElementById('locdesc').textContent=LOC[loc].desc;
 }
-function getMoonPhase(date){
-  const known = new Date(2000, 0, 6);
-  const diff = (date - known) / 86400000;
-  const cycle = 29.53;
-  const phase = ((diff % cycle) + cycle) % cycle;
-  const idx = Math.floor((phase / cycle) * 8) % 8;
-  const names = ["Νέα Σελήνη","Αυξανόμενη","Πρώτο Τέταρτο","Αυξανόμενη","Πανσέληνος","Φθίνουσα","Τελευταίο Τέταρτο","Φθίνουσα"];
-  return names[idx];
+async function fetchWx(){let l=LOC[loc];document.getElementById('wx').innerHTML='Φόρτωση...';try{let u=`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&current=temperature_2m,weather_code,wind_speed_10m,uv_index,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Athens&forecast_days=3`;let r=await fetch(u);wx=await r.json();renderWx();update()}catch(e){document.getElementById('wx').innerHTML='Αδυναμία φόρτωσης καιρού.'}}
+function renderWx(){let c=wx.current,d=wx.daily,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),hum=Math.round(c.relative_humidity_2m||0),code=c.weather_code||0;
+document.getElementById('wx').innerHTML=`<div style='display:flex;gap:14px;align-items:center'><div style='font-size:52px'>${ICON[code]||"☁️"}</div><div><div style='font-size:54px;font-weight:800'>${temp}°C</div><div>${CODE[code]||"—"}</div></div></div><div class='grid'><div class='stat'><div class='small'>Υγρασία</div><div>${hum}%</div></div><div class='stat'><div class='small'>UV</div><div>${uv}</div></div><div class='stat'><div class='small'>Άνεμος</div><div>${wind} km/h</div></div><div class='stat'><div class='small'>Χρυσή ώρα</div><div>${s.gold}</div></div></div>`;
+let fc='<div class="list">';for(let i=0;i<3;i++){let day=i===0?'Σήμερα':i===1?'Αύριο':new Date(d.time[i]).toLocaleDateString('el-GR',{weekday:'long'});fc+=`<div class='item'>${day}: ${ICON[d.weather_code[i]]||"☁️"} <span class='mono'>${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</span></div>`}fc+='</div>';document.getElementById('fc').innerHTML=fc;
+document.getElementById('radio').innerHTML=`<div class='row'><div>Τοπικός repeater</div><div class='right'>${LOC[loc].repeater}</div></div><div class='row'><div>Κλήση FM (2m)</div><div class='right'>145.500 MHz</div></div><div class='row'><div>Κλήση SSB (2m)</div><div class='right'>144.300 MHz</div></div>`;
 }
-function getSunTimes(lat, lon, date){
-  const rad = Math.PI/180;
-  const d = Math.floor((date - new Date(date.getFullYear(),0,0))/86400000);
-  const B = (360/365)*(d-81)*rad;
-  const ET = 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
-  const tz = 2;
-  const lstm = 15*tz;
-  const tc = 4*(lon-lstm)+ET;
-  const declination = 23.45*Math.sin(B)*rad;
-  const latR = lat*rad;
-  const cosH = -Math.tan(latR)*Math.tan(declination);
-  const H = Math.acos(Math.max(-1, Math.min(1, cosH))) / rad;
-  const sunrise = 12 - H/15 - tc/60;
-  const sunset = 12 + H/15 + (-tc/60);
-  const fmt = h => {
-    const hh = Math.floor(h);
-    const mm = Math.round((h-hh)*60);
-    return `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;
-  };
-  return { sunrise:fmt(sunrise), sunset:fmt(sunset), golden:fmt(sunset-1) };
+function alertBox(text,cls){return `<div class='item ${cls}'>${text}</div>`}
+function update(){
+ if(!wx)return;
+ let c=wx.current,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),sl=slice();
+ let work="08:00–11:30", outdoor=uv>=7?`${s.gold}–${s.set}`:`10:00–12:00 / ${s.gold}–${s.set}`, photo=`${s.gold}–${s.set}`, garden=temp>=28||uv>=6?`${s.gold}–${s.set}`:`09:00–11:00 / ${s.gold}–${s.set}`, radio="Βραδινό ή ήρεμο απογευματινό παράθυρο";
+ let dec=[], best=[], pp=[], alerts=[], summary=`${LOC[loc].label}: `;
+ if(pri==='work'){dec.push("Κλείδωσε πρώτα μία σοβαρή ενότητα συγκεντρωμένης εργασίας.");dec.push(`Προστάτευσε το παράθυρο ${work} από άσχετες εξωτερικές κινήσεις.`);best=[["Εργασία",work,"Το βασικό μπλοκ της ημέρας."],["Έξοδος",outdoor,"Μετά τη δουλειά."],["Φωτογραφία",photo,"Αν θες μικρή αποσυμπίεση."],["Κηπουρική",garden,"Μόνο ως δεύτερη χρήση."]];summary+="πρώτα χρειάζεται συγκεντρωμένη εργασία και μετά οργανωμένη έξοδος.";}
+ else if(pri==='gardening'){dec.push("Η κηπουρική είναι καλύτερη σε ήπιο φως και όχι στο σκληρό μεσημέρι.");dec.push(`Το βασικό παράθυρο σήμερα είναι το ${garden}.`);best=[["Κηπουρική",garden,"Η σημερινή σου προτεραιότητα."],["Φωτογραφία",photo,"Αν είσαι ήδη έξω."],["Εργασία",work,"Μικρό πρωινό μπλοκ."],["Radio",radio,"Δευτερεύον σήμερα."]];summary+="η μέρα δουλεύει καλύτερα για κηπουρική αργότερα.";}
+ else if(pri==='radio'){dec.push("Ξεκίνα από 2m / repeater και κράτα το HF ως δεύτερο στάδιο.");dec.push(`Το πιο άνετο παράθυρο είναι: ${radio}.`);best=[["Radio",radio,"Η σημερινή κύρια χρήση."],["Εργασία",work,"Μικρό πρωινό μπλοκ."],["Φωτογραφία",photo,"Μόνο αν βγεις αργότερα."],["Έξοδος",outdoor,"Δευτερεύουσα προτεραιότητα."]];summary+="η μέρα σηκώνει ήπιο radio focus.";}
+ else if(pri==='photo'){dec.push("Στη φωτογραφία, η ώρα μετρά περισσότερο από την ποσότητα της ημέρας.");dec.push(`Φρόντισε να είσαι έτοιμος πριν από τη χρυσή ώρα ${s.gold}.`);best=[["Φωτογραφία",photo,"Το σημαντικότερο παράθυρο σήμερα."],["Έξοδος",outdoor,"Συνδυάζεται εύκολα."],["Εργασία",work,"Πρωινό κλειστό μπλοκ."],["Κηπουρική",garden,"Δευτερεύουσα επιλογή."]];summary+="η αξία της ημέρας είναι κυρίως στο σωστό φως.";}
+ else if(pri==='outdoor'){dec.push("Αν η μέρα είναι για έξοδο, σεβάσου πρώτα το φως και τον άνεμο.");dec.push(`Πιο ασφαλές και χρήσιμο παράθυρο: ${outdoor}.`);best=[["Έξοδος",outdoor,"Κύριο παράθυρο σήμερα."],["Φωτογραφία",photo,"Αν θέλεις καλύτερη εικόνα."],["Κηπουρική",garden,"Αν σε ωφελεί."],["Εργασία",work,"Σύντομο πρωινό τακτοποίημα."]];summary+="καλό πρακτικό παράθυρο για έξοδο υπάρχει.";}
+ else {dec.push("Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός.");dec.push(`Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${s.gold}.`);best=[["Εργασία",work,"Για καθαρή πρωινή συγκέντρωση."],["Έξοδος",outdoor,"Για ήπια πρακτική χρήση."],["Φωτογραφία",photo,"Για καλύτερο φως."],["Κηπουρική",garden,"Αν τελικά κινηθείς έξω."]];summary+="η μέρα είναι ισορροπημένη.";}
+ if(proj==='w124'){let scored=scoreW124(wind,uv,temp),top=scored[0];dec.unshift(`W124 priority candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση τις σημερινές συνθήκες.`);best.unshift(["W124 top task",top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);summary+=` Για το W124, το πιο λογικό task σήμερα είναι: ${top.t}.`;document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span></div>`).join('');}
+ else if(proj==='nas'){dec.unshift("Project focus: NAS / network. Προτίμησε συγκεντρωμένη τεχνική ενότητα χωρίς περισπασμούς.");document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι W124 restoration.</div>";}
+ else if(proj==='uas'){dec.unshift("Project focus: UAS / drone. Ξεκίνα με checklist και όχι με βιαστική έξοδο.");document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι W124 restoration.</div>";}
+ else if(proj==='content'){dec.unshift("Project focus: Course / content creation. Κράτα καθαρό νοητικό block και όχι διάσπαση.");document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι W124 restoration.</div>";}
+ else document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";
+ pp.push(`Προτεραιότητα: ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"}.`);pp.push(`Project focus: ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"}.`);
+ if(uv>=7)alerts.push(alertBox("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.","alertH")); else if(uv>=4)alerts.push(alertBox("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.","alertM")); else alerts.push(alertBox("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.","alertL"));
+ if(wind>=35)alerts.push(alertBox("Δυνατός άνεμος — κράτα πίσω δραστηριότητες που θέλουν σταθερότητα.","alertH")); else if(wind>=20)alerts.push(alertBox("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.","alertM")); else alerts.push(alertBox("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.","alertL"));
+ let nowtxt=sl==='morning'?"Αυτή τη στιγμή ταιριάζει περισσότερο οργανωμένο πρωινό block, όχι διάσπαση.":sl==='midday'?(uv>=6?"Αυτή τη στιγμή είναι προτιμότερο να μείνεις σε εσωτερική ή ελεγχόμενη δραστηριότητα και να κρατήσεις την έξοδο για αργότερα.":"Αυτή τη στιγμή μπορείς να κάνεις σύντομη, ελεγχόμενη κίνηση, όχι όμως άσκοπη διασπορά."):`Αυτή τη στιγμή το παράθυρο πλησιάζει προς την πιο χρήσιμη απογευματινή φάση, ειδικά κοντά στις ${s.gold}.`;
+ if(proj==='w124'){let top=scoreW124(wind,uv,temp)[0]; nowtxt += ` Προσωρινή καλύτερη πρόταση για το W124: ${top.t}.`;}
+ document.getElementById('now').textContent=nowtxt;
+ document.getElementById('dec').innerHTML=dec.map(x=>`<div class='item'>${x}</div>`).join('');
+ document.getElementById('best').innerHTML=best.slice(0,4).map(x=>`<div><div class='small'>${x[0]}</div><div><strong>${x[1]}</strong></div><div class='small'>${x[2]}</div></div>`).join('');
+ document.getElementById('alerts').innerHTML=alerts.join('');
+ document.getElementById('pp').innerHTML=pp.map(x=>`<div class='item'>${x}</div>`).join('');
+ document.getElementById('slices').innerHTML=`<div><div class='small'>Πρωί</div><div><strong>${pri==='work'?'Εργασία':proj==='w124'?'Έλεγχος / planning':'Συγκέντρωση'}</strong></div><div class='small'>Καλό για καθαρή εκκίνηση.</div></div><div><div class='small'>Μεσημέρι</div><div><strong>${uv>=6?'Προσοχή':'Ελεγχόμενη χρήση'}</strong></div><div class='small'>Απόφυγε βιαστικές κινήσεις.</div></div><div><div class='small'>Απόγευμα</div><div><strong>${pri==='photo'?'Φωτογραφία':pri==='gardening'?'Κηπουρική':'Καλό παράθυρο'}</strong></div><div class='small'>Συνήθως η καλύτερη πρακτική στιγμή.</div></div>`;
+ document.getElementById('summary').textContent=summary;
+ document.getElementById('footerNote').textContent=`${LOC[loc].label.toUpperCase()} • ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"} • ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"} • προσωπικό dashboard v5`;
 }
-function greekDayName(dateStr){
-  const d = new Date(dateStr);
-  const days = ["Κυριακή","Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο"];
-  return days[d.getDay()];
-}
-
-function updateClock(){
-  const now = new Date();
-  document.getElementById("dateText").textContent = now.toLocaleDateString('el-GR',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  document.getElementById("timeText").textContent = now.toLocaleTimeString('el-GR',{hour:'2-digit', minute:'2-digit'});
-  document.getElementById("historyText").textContent = HISTORY_FACTS[now.getDate() % HISTORY_FACTS.length];
-  document.getElementById("quoteText").textContent = QUOTES[now.getDate() % QUOTES.length];
-}
-
-function renderLocationButtons(){
-  const box = document.getElementById("locationButtons");
-  box.innerHTML = "";
-  Object.entries(LOCATIONS).forEach(([key,loc])=>{
-    const btn = document.createElement("button");
-    btn.className = "pill" + (key===currentLocation ? " active" : "");
-    btn.textContent = loc.label;
-    btn.onclick = ()=> {
-      currentLocation = key;
-      localStorage.setItem("md_location", currentLocation);
-      renderLocationButtons();
-      document.getElementById("locationDesc").textContent = loc.desc;
-      fetchWeather();
-    };
-    box.appendChild(btn);
-  });
-  document.getElementById("locationDesc").textContent = LOCATIONS[currentLocation].desc;
-}
-function renderPriorityButtons(){
-  const box = document.getElementById("priorityButtons");
-  box.innerHTML = "";
-  PRIORITIES.forEach(p=>{
-    const btn = document.createElement("button");
-    btn.className = "pill" + (p.key===currentPriority ? " active":"");
-    btn.textContent = p.label;
-    btn.onclick = ()=>{
-      currentPriority = p.key;
-      localStorage.setItem("md_priority", currentPriority);
-      renderPriorityButtons();
-      updateDecisionBlocks();
-    };
-    box.appendChild(btn);
-  });
-}
-
-async function fetchWeather(){
-  const loc = LOCATIONS[currentLocation];
-  document.getElementById("weatherNow").innerHTML = '<div class="loading">Φόρτωση...</div>';
-  document.getElementById("forecastBlock").innerHTML = '<div class="loading">Φόρτωση...</div>';
-  try{
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,uv_index,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Athens&forecast_days=3`;
-    const res = await fetch(url);
-    weatherData = await res.json();
-    renderWeather();
-    updateDecisionBlocks();
-  }catch(e){
-    document.getElementById("weatherNow").innerHTML = '<div class="loading">Αδυναμία φόρτωσης καιρού.</div>';
-    document.getElementById("forecastBlock").innerHTML = '<div class="loading">Αδυναμία φόρτωσης πρόγνωσης.</div>';
-  }
-}
-
-function renderWeather(){
-  const loc = LOCATIONS[currentLocation];
-  const now = new Date();
-  const sun = getSunTimes(loc.lat, loc.lon, now);
-  const moon = getMoonPhase(now);
-  const cur = weatherData?.current || {};
-  const daily = weatherData?.daily || {};
-  const temp = Math.round(cur.temperature_2m ?? 0);
-  const humidity = Math.round(cur.relative_humidity_2m ?? 0);
-  const uv = +(cur.uv_index ?? 0).toFixed(1);
-  const wind = Math.round(cur.wind_speed_10m ?? 0);
-  const code = cur.weather_code ?? 0;
-  const bft = beaufortDesc(wind);
-
-  document.getElementById("weatherNow").innerHTML = `
-    <div class="weather-top">
-      <div class="weather-icon">${WMO_ICON[code] || "☁️"}</div>
-      <div>
-        <div class="big-temp">${temp}°C</div>
-        <div class="wdesc">${WMO_CODES[code] || "—"}</div>
-      </div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat"><div class="label">Υγρασία</div><div class="value">${humidity}%</div></div>
-      <div class="stat"><div class="label">UV Index</div><div class="value">${uv}</div></div>
-      <div class="stat"><div class="label">Άνεμος</div><div class="value">${wind} km/h</div></div>
-      <div class="stat"><div class="label">Beaufort</div><div class="value">${bft.split("–")[0].trim()}</div></div>
-    </div>
-    <div class="smallline">${bft}</div>
-    ${loc.archery ? `<div class="tag ${wind < 20 ? "green" : wind < 35 ? "warn" : "red"}">Τοξοβολία: ${wind < 20 ? "Ιδανικές συνθήκες" : wind < 35 ? "Προσοχή στον άνεμο" : "Ακατάλληλο"}</div>` : ""}
-    ${loc.sea ? `<div class="tag blue">${loc.sea}: ${bft}</div>` : ""}
-  `;
-
-  let forecast = '<div class="forecast-list">';
-  for(let i=0;i<3;i++){
-    const dayLabel = i===0 ? "Σήμερα" : i===1 ? "Αύριο" : greekDayName(daily.time?.[i]);
-    const max = Math.round(daily.temperature_2m_max?.[i] ?? 0);
-    const min = Math.round(daily.temperature_2m_min?.[i] ?? 0);
-    const dcode = daily.weather_code?.[i] ?? 0;
-    forecast += `
-      <div class="forecast-item ${i===0 ? "today":""}">
-        <div class="day">${dayLabel}</div>
-        <div class="ficon">${WMO_ICON[dcode] || "☁️"}</div>
-        <div class="temps"><span class="max">${max}°</span> / <span class="min">${min}°</span></div>
-      </div>
-    `;
-  }
-  forecast += `</div>
-    <div class="divider"></div>
-    <div class="mini-grid">
-      <div class="stat"><div class="label">Ανατολή</div><div class="value">${sun.sunrise}</div></div>
-      <div class="stat"><div class="label">Δύση</div><div class="value">${sun.sunset}</div></div>
-      <div class="stat"><div class="label">Χρυσή ώρα</div><div class="value">${sun.golden}</div></div>
-      <div class="stat"><div class="label">Σελήνη</div><div class="value">${moon}</div></div>
-    </div>`;
-  document.getElementById("forecastBlock").innerHTML = forecast;
-
-  renderRadio();
-  renderHobbies();
-}
-
-function renderRadio(){
-  const loc = LOCATIONS[currentLocation];
-  const wind = Math.round(weatherData?.current?.wind_speed_10m ?? 0);
-  let hfText = "Σταθερές συνθήκες — καλό παράθυρο για άνετη δραστηριότητα";
-  if (wind >= 35) hfText = "Ο καιρός είναι πιο σκληρός από όσο χρειάζεται για ήρεμη radio χρήση.";
-  if (currentPriority === "radio") hfText = "Η σημερινή προτεραιότητα ευνοεί radio χρήση· ξεκίνα από 2m και μετά δοκίμασε HF.";
-  document.getElementById("radioBlock").innerHTML = `
-    <div class="row"><div class="l">Τοπικός repeater</div><div class="r">${loc.hamRepeater}</div></div>
-    <div class="row"><div class="l">Κλήση FM (2m)</div><div class="r">145.500 MHz</div></div>
-    <div class="row"><div class="l">Κλήση SSB (2m)</div><div class="r">144.300 MHz</div></div>
-    <div class="row"><div class="l">HF συνθήκες</div><div class="r">${hfText}</div></div>
-  `;
-  document.getElementById("radioFoot").textContent = "Το πλήρες propagation δεν έχει ακόμη συνδεθεί με πραγματική εξωτερική πηγή.";
-}
-
-function renderHobbies(){
-  const loc = LOCATIONS[currentLocation];
-  const now = new Date();
-  const sun = getSunTimes(loc.lat, loc.lon, now);
-  const moon = getMoonPhase(now);
-  const cur = weatherData?.current || {};
-  const wind = Math.round(cur.wind_speed_10m ?? 0);
-  const uv = +(cur.uv_index ?? 0).toFixed(1);
-  const temp = Math.round(cur.temperature_2m ?? 0);
-
-  let photo = uv < 3 ? "Μαλακό φως" : uv < 7 ? "Καλό φως" : "Έντονο φως";
-  let archery = wind < 20 ? "Ιδανικό" : wind < 35 ? "Προσοχή" : "Ακατάλληλο";
-  let garden = temp < 10 ? "Κρύο" : temp > 35 ? "Καύσωνας" : "Καλές συνθήκες";
-  let radio = currentPriority === "radio" ? "Προτεραιότητα" : "Άνετα";
-
-  document.getElementById("hobbiesBlock").innerHTML = `
-    <div class="hobby-row">
-      <div class="hobby-left">Φωτογραφία</div>
-      <div class="hobby-right">
-        <div class="hobby-status">${photo}</div>
-        <div class="hobby-note">Καλύτερο παράθυρο γύρω στις ${sun.golden}</div>
-      </div>
-    </div>
-    <div class="hobby-row">
-      <div class="hobby-left">Τοξοβολία</div>
-      <div class="hobby-right">
-        <div class="hobby-status">${loc.archery ? archery : "—"}</div>
-        <div class="hobby-note">${loc.archery ? `Άνεμος: ${wind} km/h` : "Δεν έχει ενεργό τοξοβολικό context εδώ."}</div>
-      </div>
-    </div>
-    <div class="hobby-row">
-      <div class="hobby-left">Κηπουρική</div>
-      <div class="hobby-right">
-        <div class="hobby-status">${garden}</div>
-        <div class="hobby-note">${moon}</div>
-      </div>
-    </div>
-    <div class="hobby-row">
-      <div class="hobby-left">Ραδιοερασιτεχνισμός</div>
-      <div class="hobby-right">
-        <div class="hobby-status">${radio}</div>
-        <div class="hobby-note">Βελτιωμένη έμφαση όταν η προτεραιότητα είναι Radio.</div>
-      </div>
-    </div>
-  `;
-}
-
-function severityAlert(text, sev){
-  return `<div class="decision-item alert-${sev}">${text}</div>`;
-}
-
-function updateDecisionBlocks(){
-  if(!weatherData) return;
-  const loc = LOCATIONS[currentLocation];
-  const now = new Date();
-  const sun = getSunTimes(loc.lat, loc.lon, now);
-  const cur = weatherData.current || {};
-  const wind = Math.round(cur.wind_speed_10m ?? 0);
-  const uv = +(cur.uv_index ?? 0).toFixed(1);
-  const temp = Math.round(cur.temperature_2m ?? 0);
-
-  let decisions = [];
-  let alerts = [];
-  let best = [];
-  let priorityPanel = [];
-  let summary = `${loc.label}: `;
-
-  const workWindow = "08:00–11:30";
-  const outdoorWindow = uv >= 7 ? `${sun.golden}–${sun.sunset}` : `10:00–12:00 / ${sun.golden}–${sun.sunset}`;
-  const photoWindow = `${sun.golden}–${sun.sunset}`;
-  const gardeningWindow = temp >= 28 || uv >= 6 ? `${sun.golden}–${sun.sunset}` : `09:00–11:00 / ${sun.golden}–${sun.sunset}`;
-  const radioWindow = "Βραδινό ή ήρεμο απογευματινό παράθυρο";
-
-  if (currentPriority === "gardening"){
-    decisions.push("🌿 Προώθησε κηπουρική μόνο σε πιο ήπιο φως. Μην τη σπρώχνεις άσκοπα στο μεσημέρι.");
-    decisions.push(`✔ Κράτησε ως βασικό παράθυρο το ${gardeningWindow}.`);
-    decisions.push("✔ Δευτερεύουσα χρήση της ημέρας: μικρές εσωτερικές δουλειές πριν από την έξοδο.");
-    best = [
-      ["Κηπουρική", gardeningWindow, "Η σημερινή σου προτεραιότητα."],
-      ["Φωτογραφία", photoWindow, "Αν είσαι ήδη έξω κοντά στη δύση."],
-      ["Εργασία", workWindow, "Μόνο σύντομο, πειθαρχημένο πρωινό μπλοκ."],
-      ["Radio", radioWindow, "Δευτερεύον σήμερα."]
-    ];
-    priorityPanel.push("Έχεις δώσει προτεραιότητα στην Κηπουρική.");
-    priorityPanel.push("Το dashboard υποβαθμίζει το μεσημεριανό παράθυρο και αναδεικνύει αργότερη έξοδο.");
-    summary += "η μέρα δουλεύει καλύτερα για κηπουρική αργότερα, όχι βιαστικά στο σκληρό φως.";
-  } else if (currentPriority === "work"){
-    decisions.push("💼 Κλείδωσε πρώτα μία σοβαρή ενότητα συγκεντρωμένης εργασίας.");
-    decisions.push(`✔ Προστάτευσε το παράθυρο ${workWindow} από άσχετες εξωτερικές κινήσεις.`);
-    decisions.push("✔ Άφησε την έξοδο ή τις δευτερεύουσες δραστηριότητες για αργότερα.");
-    best = [
-      ["Εργασία", workWindow, "Το βασικό μπλοκ της ημέρας."],
-      ["Έξοδος", outdoorWindow, "Μετά τη δουλειά."],
-      ["Φωτογραφία", photoWindow, "Αν θες μικρή αποσυμπίεση."],
-      ["Κηπουρική", gardeningWindow, "Μόνο ως δεύτερη χρήση."]
-    ];
-    priorityPanel.push("Έχεις δώσει προτεραιότητα στην Εργασία.");
-    priorityPanel.push("Η λογική δίνει πρώτο βάρος στη συγκέντρωση και μετά στις εξωτερικές κινήσεις.");
-    summary += "πρώτα χρειάζεται συγκεντρωμένη εργασία και μετά οργανωμένη έξοδος.";
-  } else if (currentPriority === "radio"){
-    decisions.push("📡 Αν η μέρα είναι για radio, ξεκίνα από 2m / repeater και κράτα το HF ως δεύτερο στάδιο.");
-    decisions.push("✔ Μην κυνηγάς πολλά μαζί. Βάλε ξεκάθαρο radio session.");
-    decisions.push(`✔ Το πιο άνετο παράθυρο είναι: ${radioWindow}.`);
-    best = [
-      ["Radio", radioWindow, "Η σημερινή κύρια χρήση."],
-      ["Εργασία", workWindow, "Μικρό πρωινό μπλοκ αν χρειάζεται."],
-      ["Φωτογραφία", photoWindow, "Μόνο αν βγεις αργότερα."],
-      ["Έξοδος", outdoorWindow, "Δευτερεύουσα προτεραιότητα."]
-    ];
-    priorityPanel.push("Έχεις δώσει προτεραιότητα στο Radio.");
-    priorityPanel.push("Το dashboard αναβαθμίζει την αξία του radio block και του ήρεμου βραδινού παραθύρου.");
-    summary += "η μέρα σηκώνει ήπιο radio focus και όχι διάσπαση σε άσχετες κινήσεις.";
-  } else if (currentPriority === "photo"){
-    decisions.push("📷 Στη φωτογραφία, η ώρα μετρά περισσότερο από την ποσότητα της ημέρας.");
-    decisions.push(`✔ Φρόντισε να είσαι έτοιμος πριν από τη χρυσή ώρα ${sun.golden}.`);
-    decisions.push("✔ Μην ξοδέψεις το καλύτερο φως σε προετοιμασία της τελευταίας στιγμής.");
-    best = [
-      ["Φωτογραφία", photoWindow, "Το σημαντικότερο παράθυρο σήμερα."],
-      ["Έξοδος", outdoorWindow, "Συνδυάζεται εύκολα με τη φωτογραφία."],
-      ["Εργασία", workWindow, "Πρωινό κλειστό μπλοκ μόνο."],
-      ["Κηπουρική", gardeningWindow, "Δευτερεύουσα επιλογή."]
-    ];
-    priorityPanel.push("Έχεις δώσει προτεραιότητα στη Φωτογραφία.");
-    priorityPanel.push("Το dashboard αναδεικνύει περισσότερο το παράθυρο φωτός παρά τη συνολική διάρκεια της ημέρας.");
-    summary += "η αξία της ημέρας είναι κυρίως στο σωστό φως και στο timing.";
-  } else if (currentPriority === "outdoor"){
-    decisions.push("🚶 Αν η μέρα είναι για έξοδο, σεβάσου πρώτα το φως και τον άνεμο και μετά όλα τα άλλα.");
-    decisions.push(`✔ Πιο ασφαλές και χρήσιμο παράθυρο: ${outdoorWindow}.`);
-    decisions.push("✔ Μην αφήσεις το μεσημέρι να σου χαλάσει μια κατά τα άλλα καλή έξοδο.");
-    best = [
-      ["Έξοδος", outdoorWindow, "Κύριο παράθυρο σήμερα."],
-      ["Φωτογραφία", photoWindow, "Αν θέλεις καλύτερη εικόνα."],
-      ["Κηπουρική", gardeningWindow, "Αντί για απλή βόλτα, μόνο αν σε ωφελεί."],
-      ["Εργασία", workWindow, "Σύντομο πρωινό τακτοποίημα."]
-    ];
-    priorityPanel.push("Έχεις δώσει προτεραιότητα στην Έξοδο.");
-    priorityPanel.push("Το dashboard δίνει έμφαση σε πιο ήπιο παράθυρο και όχι σε τυφλή διάθεση για έξω.");
-    summary += "καλό πρακτικό παράθυρο για έξοδο υπάρχει, αν διαλέξεις σωστή ώρα.";
-  } else {
-    decisions.push("✔ Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός, μετά τα υπόλοιπα.");
-    decisions.push(`✔ Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${sun.golden}.`);
-    decisions.push("✔ Αν δεν ορίσεις προτεραιότητα, το dashboard μένει εσκεμμένα γενικό.");
-    best = [
-      ["Εργασία", workWindow, "Για καθαρή πρωινή συγκέντρωση."],
-      ["Έξοδος", outdoorWindow, "Για ήπια πρακτική χρήση της ημέρας."],
-      ["Φωτογραφία", photoWindow, "Για καλύτερο φως."],
-      ["Κηπουρική", gardeningWindow, "Αν τελικά κινηθείς έξω."]
-    ];
-    priorityPanel.push("Δεν έχει επιλεγεί συγκεκριμένη προτεραιότητα.");
-    priorityPanel.push("Το dashboard δίνει γενική εικόνα και βασικές αποφάσεις.");
-    summary += "η μέρα είναι ισορροπημένη και χρειάζεται μόνο σωστή επιλογή ώρας.";
-  }
-
-  if (uv >= 7) alerts.push(severityAlert("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.", "high"));
-  else if (uv >= 4) alerts.push(severityAlert("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.", "medium"));
-  else alerts.push(severityAlert("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.", "low"));
-
-  if (wind >= 35) alerts.push(severityAlert("Δυνατός άνεμος — κράτα πίσω τοξοβολία και δραστηριότητες που θέλουν σταθερότητα.", "high"));
-  else if (wind >= 20) alerts.push(severityAlert("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.", "medium"));
-  else alerts.push(severityAlert("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.", "low"));
-
-  if (temp >= 33) alerts.push(severityAlert("Υψηλή θερμοκρασία — κράτα ενυδάτωση και μικρότερη διάρκεια έξω.", "high"));
-  if (LOCATIONS[currentLocation].traffic) alerts.push(severityAlert(`Στην ${loc.label}, η μετακίνηση θέλει κοινή λογική στις ώρες αιχμής.`, "medium"));
-
-  document.getElementById("decisionList").innerHTML = decisions.map(x=>`<div class="decision-item">${x}</div>`).join("");
-  document.getElementById("alertsList").innerHTML = alerts.join("");
-  document.getElementById("bestWindow").innerHTML = best.map(([label,value,note])=>`
-    <div class="best-item">
-      <div class="label">${label}</div>
-      <div class="value">${value}</div>
-      <div class="note">${note}</div>
-    </div>
-  `).join("");
-  document.getElementById("priorityPanel").innerHTML = priorityPanel.map(x=>`<div class="decision-item">${x}</div>`).join("");
-
-  document.getElementById("summaryText").textContent = summary;
-  document.getElementById("footerNote").textContent =
-    `${LOCATIONS[currentLocation].label.toUpperCase()} • ${PRIORITIES.find(p=>p.key===currentPriority)?.label || "Καμία"} • προσωπικό dashboard v3`;
-}
-
-updateClock();
-renderLocationButtons();
-renderPriorityButtons();
-fetchWeather();
-setInterval(updateClock, 60000);
-</script>
-</body>
-</html>
+function tick(){let n=new Date();document.getElementById('date').textContent=n.toLocaleDateString('el-GR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('time').textContent=n.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'})}
+tick();renderButtons();fetchWx();setInterval(tick,60000);
+</script></body></html>
