@@ -1,5 +1,5 @@
 <!doctype html><html lang='el'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Morning Dashboard v9</title>
+<title>Morning Dashboard v9.1</title>
 <style>
 :root{--bg1:#1b3148;--bg2:#3a5670;--p:rgba(255,255,255,.12);--p2:rgba(255,255,255,.09);--b:rgba(255,255,255,.16);--t:#f5f1e8;--m:#d5dde6;--d:#afbcc8;--g:#d7b360;--gr:#73c996;--w:#f0be70;--r:#ec8484}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,Arial;color:var(--t);background:linear-gradient(180deg,var(--bg2),var(--bg1));padding:18px}
@@ -14,7 +14,7 @@
 h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;text-transform:uppercase}
 </style>
 <body><div class='wrap'>
-<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v9</div>
+<div class='head'><div class='small'>Morning Dashboard</div><h1 id='date'>—</h1><h2 id='time'>—</h2><div class='sum' id='summary'>Φόρτωση...</div><div class='ver' id='versionBadge'>Version v9.1</div>
 <div id='locs'></div><div class='small' id='locdesc'></div><div id='pris'></div><div class='small'>Προτεραιότητα ημέρας</div><div id='projs'></div><div class='small'>Project focus</div>
 <div class='modebox' id='modes'></div><div class='small'>W124 mode</div></div>
 
@@ -45,201 +45,35 @@ h1,h2,h3{margin:.2em 0;color:var(--g)} h3{font-size:13px;letter-spacing:.22em;te
 
 <div class='grid'>
 <div class='card'><h3>Radio</h3><div id='radio'></div></div>
-<div class='card'><h3>Notes</h3><div class='item'>Η v9 προσθέτει Weather Stability Score και το ενσωματώνει στο Confidence Meter και στο Action Block.</div></div>
+<div class='card'><h3>Notes</h3><div class='item'>Η v9.1 διορθώνει το bug της ώρας τύπου 19:60 και την προβληματική παρουσίαση της πίεσης.</div></div>
 </div>
 
 </div>
 <script>
-const BUILD="v9 • weather stability score";
+const BUILD="v9.1 • time/pressure fixes";
 const LOC={ilioupoli:{label:"Ηλιούπολη",lat:37.9317,lon:23.7617,desc:"Βασική κατοικία",traffic:true,repeater:"145.625 MHz (SV1RVX)"},loutraki:{label:"Λουτράκι",lat:37.9756,lon:22.9847,desc:"Κορινθιακός Κόλπος",traffic:false,repeater:"145.600 MHz"},kerkyra:{label:"Κέρκυρα",lat:39.6243,lon:19.9217,desc:"Βόρειο Ιόνιο",traffic:false,repeater:"145.500 MHz (κλήση)"},xanthi:{label:"Ξάνθη",lat:41.1355,lon:24.8880,desc:"Βόρεια Ελλάδα",traffic:false,repeater:"145.575 MHz"}};
 const PRI=[["none","Καμία"],["gardening","Κηπουρική"],["work","Εργασία"],["radio","Radio"],["photo","Φωτογραφία"],["outdoor","Έξοδος"]];
 const PROJ=[["none","Κανένα"],["w124","W124 restoration"],["nas","NAS / network"],["uas","UAS / drone"],["content","Course / content creation"]];
 const MODES=[["diagnosis","Diagnosis mode"],["intervention","Intervention mode"]];
-const W124=[
-{k:"fluids",t:"Πλύσιμο, έλεγχος & συμπλήρωση υγρών",m:40,i:7,r:3,w:true,typ:"maintenance",n:"Χαμηλότερου ρίσκου, καλό για πρακτική πρόοδο."},
-{k:"electrics",t:"Έλεγχος ηλεκτρικού συστήματος",m:90,i:8,r:7,w:true,typ:"diagnosis_execution",n:"Θέλει ήσυχο χρόνο και καθαρό μυαλό."},
-{k:"oils",t:"Αλλαγή λαδιών / υδραυλικό τιμόνι",m:100,i:9,r:6,w:true,typ:"maintenance",n:"Θέλει καλό παράθυρο και προετοιμασία."},
-{k:"hvac",t:"Έλεγχος-συντήρηση HVAC",m:120,i:9,r:8,w:true,typ:"diagnosis_execution",n:"Να ξεκινά πρώτα ως diagnosis, όχι τυφλό intervention."},
-{k:"obd1",t:"Χειροκίνητη ανάγνωση OBD I / κωδίκων",m:30,i:8,r:5,w:false,typ:"diagnosis",n:"Ασφαλέστερο βήμα πριν από πιο βαριά παρέμβαση."}
-];
+const W124=[{k:"fluids",t:"Πλύσιμο, έλεγχος & συμπλήρωση υγρών",m:40,i:7,r:3,w:true,typ:"maintenance",n:"Χαμηλότερου ρίσκου, καλό για πρακτική πρόοδο."},{k:"electrics",t:"Έλεγχος ηλεκτρικού συστήματος",m:90,i:8,r:7,w:true,typ:"diagnosis_execution",n:"Θέλει ήσυχο χρόνο και καθαρό μυαλό."},{k:"oils",t:"Αλλαγή λαδιών / υδραυλικό τιμόνι",m:100,i:9,r:6,w:true,typ:"maintenance",n:"Θέλει καλό παράθυρο και προετοιμασία."},{k:"hvac",t:"Έλεγχος-συντήρηση HVAC",m:120,i:9,r:8,w:true,typ:"diagnosis_execution",n:"Να ξεκινά πρώτα ως diagnosis, όχι τυφλό intervention."},{k:"obd1",t:"Χειροκίνητη ανάγνωση OBD I / κωδίκων",m:30,i:8,r:5,w:false,typ:"diagnosis",n:"Ασφαλέστερο βήμα πριν από πιο βαριά παρέμβαση."}];
 const ICON={0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"⛈️",71:"🌨️",73:"🌨️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",95:"⛈️",96:"⛈️",99:"⛈️"};
 const CODE={0:"Αίθριος",1:"Κυρίως αίθριος",2:"Αραιή συννεφιά",3:"Συννεφιά",45:"Ομίχλη",48:"Παγετώδης ομίχλη",51:"Ψιλόβροχο",53:"Μέτριο ψιλόβροχο",55:"Πυκνό ψιλόβροχο",61:"Ελαφρά βροχή",63:"Μέτρια βροχή",65:"Έντονη βροχή",71:"Ελαφρά χιονόπτωση",73:"Μέτρια χιονόπτωση",75:"Έντονη χιονόπτωση",80:"Ελαφρές ριπές βροχής",81:"Μέτριες ριπές",82:"Έντονες ριπές",95:"Καταιγίδα",96:"Καταιγίδα με χαλάζι",99:"Σφοδρή καταιγίδα"};
 let loc=localStorage.getItem('md_location')||'ilioupoli', pri=localStorage.getItem('md_priority')||'none', proj=localStorage.getItem('md_project')||'none', wmode=localStorage.getItem('md_w124_mode')||'diagnosis', wx=null;
 function safeWx(){return {current:{temperature_2m:21,weather_code:2,wind_speed_10m:12,wind_direction_10m:315,surface_pressure:1016,uv_index:2.0,relative_humidity_2m:45},daily:{time:[new Date().toISOString().slice(0,10),new Date(Date.now()+86400000).toISOString().slice(0,10),new Date(Date.now()+2*86400000).toISOString().slice(0,10)],temperature_2m_max:[22,21,20],temperature_2m_min:[15,12,12],weather_code:[61,2,1]},_fallback:true,_fallback_msg:"Χρησιμοποιούνται προσωρινά ασφαλή δεδομένα επειδή ο καιρός δεν φορτώθηκε."}}
-function sun(lat,lon,d){const rad=Math.PI/180;const n=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const B=(360/365)*(n-81)*rad;const ET=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);const tz=2,lstm=15*tz,tc=4*(lon-lstm)+ET,decl=23.45*Math.sin(B)*rad,latR=lat*rad,cosH=-Math.tan(latR)*Math.tan(decl),H=Math.acos(Math.max(-1,Math.min(1,cosH)))/rad;const sr=12-H/15-tc/60,ss=12+H/15+(-tc/60),f=h=>`${String(Math.floor(h)).padStart(2,"0")}:${String(Math.round((h-Math.floor(h))*60)).padStart(2,"0")}`;return{rise:f(sr),set:f(ss),gold:f(ss-1)}}
+function sun(lat,lon,d){const rad=Math.PI/180;const n=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const B=(360/365)*(n-81)*rad;const ET=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);const tz=2,lstm=15*tz,tc=4*(lon-lstm)+ET,decl=23.45*Math.sin(B)*rad,latR=lat*rad,cosH=-Math.tan(latR)*Math.tan(decl),H=Math.acos(Math.max(-1,Math.min(1,cosH)))/rad;const sr=12-H/15-tc/60,ss=12+H/15+(-tc/60);function fmtHours(h){let hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh+=1;mm=0}if(hh===24)hh=0;return `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}`}return{rise:fmtHours(sr),set:fmtHours(ss),gold:fmtHours(ss-1)}}
 function slice(){let h=new Date().getHours();if(h<12)return"morning";if(h<17)return"midday";return"evening"}
-function windDir(deg){
- if (deg===null || deg===undefined) return "—";
- const dirs=["Β","ΒΒΑ","ΒΑ","ΑΒΑ","Α","ΑΝΑ","ΝΑ","ΝΝΑ","Ν","ΝΝΔ","ΝΔ","ΔΝΔ","Δ","ΔΒΔ","ΒΔ","ΒΒΔ"];
- return dirs[Math.round(deg/22.5)%16];
-}
-function scoreW124(wind,uv,temp,mode){
-  return W124.map(t=>{
-    let s=t.i*10-t.r*3;
-    if(t.w){if(wind>=30)s-=20; if(wind>=20)s-=8; if(uv>=7)s-=14; if(temp>=33)s-=12; if(temp<=5)s-=15}
-    if(t.m<=40)s+=8; if(t.m>=100)s-=5;
-    if(mode==="diagnosis"){
-      if(t.typ==="diagnosis") s+=18;
-      if(t.typ==="diagnosis_execution") s-=8;
-      if(t.k==="obd1") s+=10;
-      if(t.k==="hvac") s-=10;
-      if(t.k==="electrics") s-=2;
-    }else{
-      if(t.typ==="diagnosis") s-=14;
-      if(t.typ==="maintenance") s+=10;
-      if(t.typ==="diagnosis_execution") s+=6;
-      if(t.k==="obd1") s-=10;
-      if(t.k==="oils") s+=8;
-      if(t.k==="fluids") s+=6;
-      if(t.k==="hvac") s+=2;
-    }
-    return {...t,s}
-  }).sort((a,b)=>b.s-a.s)
-}
-function pressureTrend(currentPressure){
-  const prevRaw = localStorage.getItem('md_last_pressure');
-  const prev = prevRaw ? parseFloat(prevRaw) : null;
-  localStorage.setItem('md_last_pressure', String(currentPressure));
-  if(prev===null || isNaN(prev) || currentPressure===null || currentPressure===undefined) return {symbol:"→", text:"steady"};
-  const delta = currentPressure - prev;
-  if(delta > 1.2) return {symbol:"↑", text:"rising"};
-  if(delta < -1.2) return {symbol:"↓", text:"falling"};
-  return {symbol:"→", text:"steady"};
-}
-function stabilityScore(current){
-  let s=100;
-  const wind = Math.round(current.wind_speed_10m||0);
-  const uv = +(current.uv_index||0).toFixed(1);
-  const temp = Math.round(current.temperature_2m||0);
-  const hum = Math.round(current.relative_humidity_2m||0);
-  const pressure = Math.round(current.surface_pressure||1015);
-  if(wind>=30) s-=30; else if(wind>=20) s-=15; else if(wind>=12) s-=5;
-  if(uv>=8) s-=12; else if(uv>=5) s-=6;
-  if(temp>=35 || temp<=2) s-=15; else if(temp>=30 || temp<=6) s-=8;
-  if(hum>=85) s-=8; else if(hum>=75) s-=4;
-  if(pressure<1005) s-=12; else if(pressure>1020) s+=4;
-  s = Math.max(10, Math.min(100, s));
-  let label="Medium", cls="medium", text="Μέτρια σταθερότητα.";
-  if(s>=75){label="High"; cls="high"; text="Σχετικά σταθερό παράθυρο για τεχνικές και εξωτερικές αποφάσεις.";}
-  else if(s<45){label="Low"; cls="low"; text="Ασταθές παράθυρο. Απόφυγε βαριές ή οριακές παρεμβάσεις.";}
-  return {value:s,label,cls,text};
-}
-function confidenceForTask(task, wind, uv, temp, mode, stability){
-  let c=70;
-  c -= task.r*4;
-  if(task.w){ if(wind>=30)c-=20; else if(wind>=20)c-=8; if(uv>=7)c-=12; else if(uv>=4)c-=5; if(temp>=33 || temp<=5)c-=10; }
-  if(mode==="diagnosis"){ if(task.typ==="diagnosis") c+=14; if(task.typ==="diagnosis_execution") c-=8; if(task.k==="obd1") c+=6; }
-  else { if(task.typ==="maintenance") c+=6; if(task.typ==="diagnosis") c-=12; if(task.typ==="diagnosis_execution") c-=2; if(task.m>=100) c-=5; }
-  c += Math.round((stability.value-60)/5);
-  c = Math.max(5, Math.min(95, c));
-  let label="Medium", cls="medium", advice="Προχώρα με έλεγχο.";
-  if(c>=72){label="High"; cls="high"; advice="Προχώρα — οι συνθήκες είναι αρκετά καλές.";}
-  else if(c<45){label="Low"; cls="low"; advice="Μην κάνεις intervention σήμερα αν δεν υπάρχει σοβαρός λόγος.";}
-  return {value:c,label,cls,advice};
-}
-function consistencyAnalysis(){
-  const msgs=[];
-  if(proj==="w124" && pri!=="work" && pri!=="none"){msgs.push({cls:"cons-warn", text:`Το project είναι W124 αλλά η γενική προτεραιότητα είναι ${PRI.find(x=>x[0]===pri)?.[1]}. Αυτό είναι αποδεκτό, αλλά μειώνει την καθαρότητα της ημέρας.`});}
-  if(proj!=="w124" && wmode==="intervention"){msgs.push({cls:"cons-warn", text:"Το W124 intervention mode είναι ενεργό χωρίς W124 project focus. Δεν είναι λάθος, αλλά είναι άσχετο context."});}
-  if(proj!=="w124" && wmode==="diagnosis"){msgs.push({cls:"cons-ok", text:"Το W124 mode μένει ανενεργό ουσιαστικά όσο το project focus δεν είναι W124. Άρα δεν επηρεάζει λάθος το υπόλοιπο dashboard."});}
-  if(proj==="w124" && pri==="work"){msgs.push({cls:"cons-ok", text:"W124 + Εργασία είναι συνεπές setup. Το dashboard αντιμετωπίζει το W124 ως structured work, όχι ως τυχαίο hobby."});}
-  if(proj==="uas" && wmode!=="diagnosis"){msgs.push({cls:"cons-warn", text:"Το project είναι UAS αλλά ο W124 mode selector παραμένει σε intervention. Το dashboard το αγνοεί, αλλά το UI σε αφήνει να έχεις θόρυβο context."});}
-  if(proj==="none" && pri==="none"){msgs.push({cls:"cons-bad", text:"Δεν υπάρχει ούτε προτεραιότητα ούτε project focus. Το dashboard μένει χρήσιμο, αλλά η απόφαση θα παραμείνει γενική."});}
-  if(msgs.length===0) msgs.push({cls:"cons-ok", text:"Δεν εντοπίστηκε ουσιαστική αντίφαση ανάμεσα σε priority, project focus και W124 mode."});
-  return msgs;
-}
-function renderButtons(){
- let L=document.getElementById('locs'),P=document.getElementById('pris'),R=document.getElementById('projs'),M=document.getElementById('modes');L.innerHTML='';P.innerHTML='';R.innerHTML='';M.innerHTML='';
- Object.entries(LOC).forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===loc?' active':'');b.textContent=v.label;b.onclick=()=>{loc=k;localStorage.setItem('md_location',k);renderButtons();fetchWx()};L.appendChild(b)});
- PRI.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===pri?' active':'');b.textContent=v;b.onclick=()=>{pri=k;localStorage.setItem('md_priority',k);renderButtons();update()};P.appendChild(b)});
- PROJ.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===proj?' active':'');b.textContent=v;b.onclick=()=>{proj=k;localStorage.setItem('md_project',k);renderButtons();update()};R.appendChild(b)});
- MODES.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===wmode?' active':'');b.textContent=v;b.onclick=()=>{wmode=k;localStorage.setItem('md_w124_mode',k);renderButtons();update()};M.appendChild(b)});
- document.getElementById('locdesc').textContent=LOC[loc].desc;
- document.getElementById('versionBadge').textContent=`Version ${BUILD}`;
-}
-async function fetchWx(){
- document.getElementById('wx').innerHTML='Φόρτωση...';
- try{
-   let l=LOC[loc];
-   let u=`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,uv_index,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Athens&forecast_days=3`;
-   let r=await fetch(u,{cache:"no-store"});
-   if(!r.ok) throw new Error("weather fetch failed");
-   wx=await r.json();
-   localStorage.setItem('md_last_wx', JSON.stringify(wx));
-   renderWx();
-   update();
- }catch(e){
-   try{const cached = localStorage.getItem('md_last_wx'); if(cached){ wx=JSON.parse(cached); wx._fallback=true; wx._fallback_msg="Χρησιμοποιούνται τα τελευταία αποθηκευμένα δεδομένα καιρού."; } else wx=safeWx();}catch(_){ wx=safeWx(); }
-   renderWx(); update();
- }
-}
-function renderWx(){
- let c=wx.current,d=wx.daily,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),wdeg=Math.round(c.wind_direction_10m??0),wcard=windDir(c.wind_direction_10m),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),hum=Math.round(c.relative_humidity_2m||0),pressure=Math.round(c.surface_pressure||1015),trend=pressureTrend(pressure),code=c.weather_code||0;
- let status = wx._fallback ? `<div class='small info'>${wx._fallback_msg}</div>` : `<div class='small ok'>Live weather loaded.</div>`;
- document.getElementById('wx').innerHTML=`${status}<div style='display:flex;gap:14px;align-items:center;margin-top:8px'><div style='font-size:52px'>${ICON[code]||"☁️"}</div><div><div style='font-size:54px;font-weight:800'>${temp}°C</div><div>${CODE[code]||"—"}</div></div></div><div class='grid'><div class='stat'><div class='small'>Υγρασία</div><div>${hum}%</div></div><div class='stat'><div class='small'>UV</div><div>${uv}</div></div><div class='stat'><div class='small'>Άνεμος</div><div>${wind} km/h ${wcard} (${wdeg}°)</div></div><div class='stat'><div class='small'>Πίεση</div><div>${pressure} hPa ${trend.symbol} ${trend.text}</div></div><div class='stat'><div class='small'>Χρυσή ώρα</div><div>${s.gold}</div></div></div>`;
- let fc=`${wx._fallback ? `<div class='small info'>Η πρόγνωση χρησιμοποιεί fallback δεδομένα.</div>` : ""}<div class="list">`;
- for(let i=0;i<3;i++){let day=i===0?'Σήμερα':i===1?'Αύριο':new Date(d.time[i]).toLocaleDateString('el-GR',{weekday:'long'});fc+=`<div class='item'>${day}: ${ICON[d.weather_code[i]]||"☁️"} <span class='mono'>${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</span></div>`}
- fc+='</div>';document.getElementById('fc').innerHTML=fc;
- document.getElementById('radio').innerHTML=`<div class='row'><div>Τοπικός repeater</div><div class='right'>${LOC[loc].repeater}</div></div><div class='row'><div>Κλήση FM (2m)</div><div class='right'>145.500 MHz</div></div><div class='row'><div>Κλήση SSB (2m)</div><div class='right'>144.300 MHz</div></div><div class='row'><div>Άνεμος</div><div class='right'>${wind} km/h ${wcard}</div></div><div class='row'><div>Πίεση</div><div class='right'>${pressure} hPa</div></div>`;
-}
+function windDir(deg){if(deg===null||deg===undefined)return "—";const dirs=["Β","ΒΒΑ","ΒΑ","ΑΒΑ","Α","ΑΝΑ","ΝΑ","ΝΝΑ","Ν","ΝΝΔ","ΝΔ","ΔΝΔ","Δ","ΔΒΔ","ΒΔ","ΒΒΔ"];return dirs[Math.round(deg/22.5)%16]}
+function scoreW124(wind,uv,temp,mode){return W124.map(t=>{let s=t.i*10-t.r*3;if(t.w){if(wind>=30)s-=20;if(wind>=20)s-=8;if(uv>=7)s-=14;if(temp>=33)s-=12;if(temp<=5)s-=15}if(t.m<=40)s+=8;if(t.m>=100)s-=5;if(mode==="diagnosis"){if(t.typ==="diagnosis")s+=18;if(t.typ==="diagnosis_execution")s-=8;if(t.k==="obd1")s+=10;if(t.k==="hvac")s-=10;if(t.k==="electrics")s-=2}else{if(t.typ==="diagnosis")s-=14;if(t.typ==="maintenance")s+=10;if(t.typ==="diagnosis_execution")s+=6;if(t.k==="obd1")s-=10;if(t.k==="oils")s+=8;if(t.k==="fluids")s+=6;if(t.k==="hvac")s+=2}return {...t,s}}).sort((a,b)=>b.s-a.s)}
+function stabilityScore(current){let s=100;const wind=Math.round(current.wind_speed_10m||0),uv=+(current.uv_index||0).toFixed(1),temp=Math.round(current.temperature_2m||0),hum=Math.round(current.relative_humidity_2m||0),pressure=Math.round(current.surface_pressure||1015);if(wind>=30)s-=30;else if(wind>=20)s-=15;else if(wind>=12)s-=5;if(uv>=8)s-=12;else if(uv>=5)s-=6;if(temp>=35||temp<=2)s-=15;else if(temp>=30||temp<=6)s-=8;if(hum>=85)s-=8;else if(hum>=75)s-=4;if(pressure<1005)s-=12;else if(pressure>1020)s+=4;s=Math.max(10,Math.min(100,s));let label="Medium",cls="medium",text="Μέτρια σταθερότητα.";if(s>=75){label="High";cls="high";text="Σχετικά σταθερό παράθυρο για τεχνικές και εξωτερικές αποφάσεις."}else if(s<45){label="Low";cls="low";text="Ασταθές παράθυρο. Απόφυγε βαριές ή οριακές παρεμβάσεις."}return{value:s,label,cls,text}}
+function pressureInterpretation(p){if(p<1005)return "χαμηλή / ασταθής";if(p>1020)return "υψηλή / σταθερότερη";return "ουδέτερη"}
+function confidenceForTask(task,wind,uv,temp,mode,stability){let c=70;c-=task.r*4;if(task.w){if(wind>=30)c-=20;else if(wind>=20)c-=8;if(uv>=7)c-=12;else if(uv>=4)c-=5;if(temp>=33||temp<=5)c-=10}if(mode==="diagnosis"){if(task.typ==="diagnosis")c+=14;if(task.typ==="diagnosis_execution")c-=8;if(task.k==="obd1")c+=6}else{if(task.typ==="maintenance")c+=6;if(task.typ==="diagnosis")c-=12;if(task.typ==="diagnosis_execution")c-=2;if(task.m>=100)c-=5}c+=Math.round((stability.value-60)/5);c=Math.max(5,Math.min(95,c));let label="Medium",cls="medium",advice="Προχώρα με έλεγχο.";if(c>=72){label="High";cls="high";advice="Προχώρα — οι συνθήκες είναι αρκετά καλές."}else if(c<45){label="Low";cls="low";advice="Μην κάνεις intervention σήμερα αν δεν υπάρχει σοβαρός λόγος."}return{value:c,label,cls,advice}}
+function consistencyAnalysis(){const msgs=[];if(proj==="w124"&&pri!=="work"&&pri!=="none")msgs.push({cls:"cons-warn",text:`Το project είναι W124 αλλά η γενική προτεραιότητα είναι ${PRI.find(x=>x[0]===pri)?.[1]}. Αυτό είναι αποδεκτό, αλλά μειώνει την καθαρότητα της ημέρας.`});if(proj!=="w124"&&wmode==="intervention")msgs.push({cls:"cons-warn",text:"Το W124 intervention mode είναι ενεργό χωρίς W124 project focus. Δεν είναι λάθος, αλλά είναι άσχετο context."});if(proj!=="w124"&&wmode==="diagnosis")msgs.push({cls:"cons-ok",text:"Το W124 mode μένει ανενεργό ουσιαστικά όσο το project focus δεν είναι W124. Άρα δεν επηρεάζει λάθος το υπόλοιπο dashboard."});if(proj==="w124"&&pri==="work")msgs.push({cls:"cons-ok",text:"W124 + Εργασία είναι συνεπές setup. Το dashboard αντιμετωπίζει το W124 ως structured work, όχι ως τυχαίο hobby."});if(proj==="uas"&&wmode!=="diagnosis")msgs.push({cls:"cons-warn",text:"Το project είναι UAS αλλά ο W124 mode selector παραμένει σε intervention. Το dashboard το αγνοεί, αλλά το UI σε αφήνει να έχεις θόρυβο context."});if(proj==="none"&&pri==="none")msgs.push({cls:"cons-bad",text:"Δεν υπάρχει ούτε προτεραιότητα ούτε project focus. Το dashboard μένει χρήσιμο, αλλά η απόφαση θα παραμείνει γενική."});if(msgs.length===0)msgs.push({cls:"cons-ok",text:"Δεν εντοπίστηκε ουσιαστική αντίφαση ανάμεσα σε priority, project focus και W124 mode."});return msgs}
+function renderButtons(){let L=document.getElementById('locs'),P=document.getElementById('pris'),R=document.getElementById('projs'),M=document.getElementById('modes');L.innerHTML='';P.innerHTML='';R.innerHTML='';M.innerHTML='';Object.entries(LOC).forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===loc?' active':'');b.textContent=v.label;b.onclick=()=>{loc=k;localStorage.setItem('md_location',k);renderButtons();fetchWx()};L.appendChild(b)});PRI.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===pri?' active':'');b.textContent=v;b.onclick=()=>{pri=k;localStorage.setItem('md_priority',k);renderButtons();update()};P.appendChild(b)});PROJ.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===proj?' active':'');b.textContent=v;b.onclick=()=>{proj=k;localStorage.setItem('md_project',k);renderButtons();update()};R.appendChild(b)});MODES.forEach(([k,v])=>{let b=document.createElement('button');b.className='pill'+(k===wmode?' active':'');b.textContent=v;b.onclick=()=>{wmode=k;localStorage.setItem('md_w124_mode',k);renderButtons();update()};M.appendChild(b)});document.getElementById('locdesc').textContent=LOC[loc].desc;document.getElementById('versionBadge').textContent=`Version ${BUILD}`}
+async function fetchWx(){document.getElementById('wx').innerHTML='Φόρτωση...';try{let l=LOC[loc];let u=`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,uv_index,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Athens&forecast_days=3`;let r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error("weather fetch failed");wx=await r.json();localStorage.setItem('md_last_wx',JSON.stringify(wx));renderWx();update()}catch(e){try{const cached=localStorage.getItem('md_last_wx');if(cached){wx=JSON.parse(cached);wx._fallback=true;wx._fallback_msg="Χρησιμοποιούνται τα τελευταία αποθηκευμένα δεδομένα καιρού."}else wx=safeWx()}catch(_){wx=safeWx()}renderWx();update()}}
+function renderWx(){let c=wx.current,d=wx.daily,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),wdeg=Math.round(c.wind_direction_10m??0),wcard=windDir(c.wind_direction_10m),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),hum=Math.round(c.relative_humidity_2m||0),pressure=Math.round(c.surface_pressure||1015),ptext=pressureInterpretation(pressure),code=c.weather_code||0;let status=wx._fallback?`<div class='small info'>${wx._fallback_msg}</div>`:`<div class='small ok'>Live weather loaded.</div>`;document.getElementById('wx').innerHTML=`${status}<div style='display:flex;gap:14px;align-items:center;margin-top:8px'><div style='font-size:52px'>${ICON[code]||"☁️"}</div><div><div style='font-size:54px;font-weight:800'>${temp}°C</div><div>${CODE[code]||"—"}</div></div></div><div class='grid'><div class='stat'><div class='small'>Υγρασία</div><div>${hum}%</div></div><div class='stat'><div class='small'>UV</div><div>${uv}</div></div><div class='stat'><div class='small'>Άνεμος</div><div>${wind} km/h ${wcard} (${wdeg}°)</div></div><div class='stat'><div class='small'>Πίεση</div><div>${pressure} hPa • ${ptext}</div></div><div class='stat'><div class='small'>Χρυσή ώρα</div><div>${s.gold}</div></div></div>`;let fc=`${wx._fallback?`<div class='small info'>Η πρόγνωση χρησιμοποιεί fallback δεδομένα.</div>`:""}<div class="list">`;for(let i=0;i<3;i++){let day=i===0?'Σήμερα':i===1?'Αύριο':new Date(d.time[i]).toLocaleDateString('el-GR',{weekday:'long'});fc+=`<div class='item'>${day}: ${ICON[d.weather_code[i]]||"☁️"} <span class='mono'>${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</span></div>`}fc+='</div>';document.getElementById('fc').innerHTML=fc;document.getElementById('radio').innerHTML=`<div class='row'><div>Τοπικός repeater</div><div class='right'>${LOC[loc].repeater}</div></div><div class='row'><div>Κλήση FM (2m)</div><div class='right'>145.500 MHz</div></div><div class='row'><div>Κλήση SSB (2m)</div><div class='right'>144.300 MHz</div></div><div class='row'><div>Άνεμος</div><div class='right'>${wind} km/h ${wcard}</div></div><div class='row'><div>Πίεση</div><div class='right'>${pressure} hPa</div></div>`}
 function alertBox(text,cls){return `<div class='item ${cls}'>${text}</div>`}
-function modeTag(task, mode){
-  if(mode==="diagnosis"){
-    if(task.typ==="diagnosis") return "<span class='tag diag'>Ιδανικό για diagnosis</span>";
-    if(task.typ==="diagnosis_execution") return "<span class='tag intv'>Θέλει προσοχή στο diagnosis mode</span>";
-    return "<span class='tag block'>Όχι κύριο diagnosis task</span>";
-  }else{
-    if(task.typ==="maintenance") return "<span class='tag diag'>Κατάλληλο για intervention day</span>";
-    if(task.typ==="diagnosis_execution") return "<span class='tag intv'>Μπορεί να γίνει με έλεγχο</span>";
-    return "<span class='tag block'>Υποχωρεί στο intervention mode</span>";
-  }
-}
-function update(){
- if(!wx)return;
- let c=wx.current,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),sl=slice(),stability=stabilityScore(c);
- let work="08:00–11:30", outdoor=uv>=7?`${s.gold}–${s.set}`:`10:00–12:00 / ${s.gold}–${s.set}`, photo=`${s.gold}–${s.set}`, garden=temp>=28||uv>=6?`${s.gold}–${s.set}`:`09:00–11:00 / ${s.gold}–${s.set}`, radio="Βραδινό ή ήρεμο απογευματινό παράθυρο";
- let dec=[], best=[], pp=[], alerts=[], summary=`${LOC[loc].label}: `;
- if(pri==='work'){dec.push("Κλείδωσε πρώτα μία σοβαρή ενότητα συγκεντρωμένης εργασίας.");dec.push(`Προστάτευσε το παράθυρο ${work} από άσχετες εξωτερικές κινήσεις.`);best=[["Εργασία",work,"Το βασικό μπλοκ της ημέρας."],["Έξοδος",outdoor,"Μετά τη δουλειά."],["Φωτογραφία",photo,"Αν θες μικρή αποσυμπίεση."],["Κηπουρική",garden,"Μόνο ως δεύτερη χρήση."]];summary+="πρώτα χρειάζεται συγκεντρωμένη εργασία και μετά οργανωμένη έξοδος.";}
- else if(pri==='gardening'){dec.push("Η κηπουρική είναι καλύτερη σε ήπιο φως και όχι στο σκληρό μεσημέρι.");dec.push(`Το βασικό παράθυρο σήμερα είναι το ${garden}.`);best=[["Κηπουρική",garden,"Η σημερινή σου προτεραιότητα."],["Φωτογραφία",photo,"Αν είσαι ήδη έξω."],["Εργασία",work,"Μικρό πρωινό μπλοκ."],["Radio",radio,"Δευτερεύον σήμερα."]];summary+="η μέρα δουλεύει καλύτερα για κηπουρική αργότερα.";}
- else if(pri==='radio'){dec.push("Ξεκίνα από 2m / repeater και κράτα το HF ως δεύτερο στάδιο.");dec.push(`Το πιο άνετο παράθυρο είναι: ${radio}.`);best=[["Radio",radio,"Η σημερινή κύρια χρήση."],["Εργασία",work,"Μικρό πρωινό μπλοκ."],["Φωτογραφία",photo,"Μόνο αν βγεις αργότερα."],["Έξοδος",outdoor,"Δευτερεύουσα προτεραιότητα."]];summary+="η μέρα σηκώνει ήπιο radio focus.";}
- else if(pri==='photo'){dec.push("Στη φωτογραφία, η ώρα μετρά περισσότερο από την ποσότητα της ημέρας.");dec.push(`Φρόντισε να είσαι έτοιμος πριν από τη χρυσή ώρα ${s.gold}.`);best=[["Φωτογραφία",photo,"Το σημαντικότερο παράθυρο σήμερα."],["Έξοδος",outdoor,"Συνδυάζεται εύκολα."],["Εργασία",work,"Πρωινό κλειστό μπλοκ."],["Κηπουρική",garden,"Δευτερεύουσα επιλογή."]];summary+="η αξία της ημέρας είναι κυρίως στο σωστό φως.";}
- else if(pri==='outdoor'){dec.push("Αν η μέρα είναι για έξοδο, σεβάσου πρώτα το φως και τον άνεμο.");dec.push(`Πιο ασφαλές και χρήσιμο παράθυρο: ${outdoor}.`);best=[["Έξοδος",outdoor,"Κύριο παράθυρο σήμερα."],["Φωτογραφία",photo,"Αν θέλεις καλύτερη εικόνα."],["Κηπουρική",garden,"Αν σε ωφελεί."],["Εργασία",work,"Σύντομο πρωινό τακτοποίημα."]];summary+="καλό πρακτικό παράθυρο για έξοδο υπάρχει.";}
- else {dec.push("Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός.");dec.push(`Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${s.gold}.`);best=[["Εργασία",work,"Για καθαρή πρωινή συγκέντρωση."],["Έξοδος",outdoor,"Για ήπια πρακτική χρήση."],["Φωτογραφία",photo,"Για καλύτερο φως."],["Κηπουρική",garden,"Αν τελικά κινηθείς έξω."]];summary+="η μέρα είναι ισορροπημένη.";}
- let conf = null;
- if(proj==='w124'){
-   let scored=scoreW124(wind,uv,temp,wmode),top=scored[0];
-   conf = confidenceForTask(top, wind, uv, temp, wmode, stability);
-   dec.unshift(`W124 ${wmode} candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση το επιλεγμένο mode και τις σημερινές συνθήκες.`);
-   best.unshift([`W124 top task (${wmode})`,top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);
-   summary+=` Για το W124 (${wmode}), το πιο λογικό task σήμερα είναι: ${top.t}.`;
-   document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span><br>${modeTag(t,wmode)}</div>`).join('');
-   document.getElementById('confidence').innerHTML = `<div class='meter'><div><strong>Top task:</strong> ${top.t}</div><div class='small'>Mode: ${wmode} • Confidence: <span class='conf-${conf.cls}'>${conf.label}</span> (${conf.value}/100)</div><div class='bar'><div class='fill ${conf.cls}' style='width:${conf.value}%'></div></div><div class='small' style='margin-top:8px'>${conf.advice}</div><div class='small'>Weather stability contribution: ${stability.label} (${stability.value}/100)</div></div>`;
- } else {
-   document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";
-   document.getElementById('confidence').innerHTML = "<div class='meter'><div><strong>Confidence Meter</strong></div><div class='small'>Ενεργοποιείται πιο ουσιαστικά όταν υπάρχει συγκεκριμένο project focus, π.χ. W124 restoration.</div></div>";
- }
- document.getElementById('stability').innerHTML = `<div class='meter'><div><strong>Weather stability:</strong> <span class='conf-${stability.cls}'>${stability.label}</span> (${stability.value}/100)</div><div class='bar'><div class='fill ${stability.cls}' style='width:${stability.value}%'></div></div><div class='small' style='margin-top:8px'>${stability.text}</div></div>`;
- pp.push(`Προτεραιότητα: ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"}.`);pp.push(`Project focus: ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"}.`);
- if(proj==='w124') pp.push(`W124 mode: ${wmode}.`);
- if(wx._fallback) pp.push("Weather mode: fallback ενεργό.");
- if(conf) pp.push(`Task confidence: ${conf.label} (${conf.value}/100).`);
- pp.push(`Weather stability: ${stability.label} (${stability.value}/100).`);
- if(uv>=7)alerts.push(alertBox("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.","alertH")); else if(uv>=4)alerts.push(alertBox("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.","alertM")); else alerts.push(alertBox("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.","alertL"));
- if(wind>=35)alerts.push(alertBox("Δυνατός άνεμος — κράτα πίσω δραστηριότητες που θέλουν σταθερότητα.","alertH")); else if(wind>=20)alerts.push(alertBox("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.","alertM")); else alerts.push(alertBox("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.","alertL"));
- let cons = consistencyAnalysis();
- document.getElementById('consistency').innerHTML = cons.map(x=>`<div class='item ${x.cls}'>${x.text}</div>`).join('');
- let nowtxt=sl==='morning'?"Αυτή τη στιγμή ταιριάζει περισσότερο οργανωμένο πρωινό block, όχι διάσπαση.":sl==='midday'?(uv>=6?"Αυτή τη στιγμή είναι προτιμότερο να μείνεις σε εσωτερική ή ελεγχόμενη δραστηριότητα και να κρατήσεις την έξοδο για αργότερα.":"Αυτή τη στιγμή μπορείς να κάνεις σύντομη, ελεγχόμενη κίνηση, όχι όμως άσκοπη διασπορά."):`Αυτή τη στιγμή το παράθυρο πλησιάζει προς την πιο χρήσιμη απογευματινή φάση, ειδικά κοντά στις ${s.gold}.`;
- if(proj==='w124'){let top=scoreW124(wind,uv,temp,wmode)[0]; nowtxt += ` Προσωρινή καλύτερη πρόταση για το W124 (${wmode}): ${top.t}.`; if(conf) nowtxt += ` Confidence: ${conf.label}.`; }
- nowtxt += ` Weather stability: ${stability.label}.`;
- if(wx._fallback) nowtxt += " Ο καιρός δεν φορτώθηκε live, αλλά η λογική συνεχίζει με fallback.";
- document.getElementById('now').textContent=nowtxt;
- document.getElementById('dec').innerHTML=dec.map(x=>`<div class='item'>${x}</div>`).join('');
- document.getElementById('best').innerHTML=best.slice(0,4).map(x=>`<div><div class='small'>${x[0]}</div><div><strong>${x[1]}</strong></div><div class='small'>${x[2]}</div></div>`).join('');
- document.getElementById('alerts').innerHTML=alerts.join('');
- document.getElementById('pp').innerHTML=pp.map(x=>`<div class='item'>${x}</div>`).join('');
- document.getElementById('slices').innerHTML=`<div><div class='small'>Πρωί</div><div><strong>${pri==='work'?'Εργασία':proj==='w124'?'Έλεγχος / planning':'Συγκέντρωση'}</strong></div><div class='small'>Καλό για καθαρή εκκίνηση.</div></div><div><div class='small'>Μεσημέρι</div><div><strong>${uv>=6?'Προσοχή':'Ελεγχόμενη χρήση'}</strong></div><div class='small'>Απόφυγε βιαστικές κινήσεις.</div></div><div><div class='small'>Απόγευμα</div><div><strong>${pri==='photo'?'Φωτογραφία':pri==='gardening'?'Κηπουρική':'Καλό παράθυρο'}</strong></div><div class='small'>Συνήθως η καλύτερη πρακτική στιγμή.</div></div>`;
- document.getElementById('summary').textContent=summary;
-}
+function modeTag(task,mode){if(mode==="diagnosis"){if(task.typ==="diagnosis")return "<span class='tag diag'>Ιδανικό για diagnosis</span>";if(task.typ==="diagnosis_execution")return "<span class='tag intv'>Θέλει προσοχή στο diagnosis mode</span>";return "<span class='tag block'>Όχι κύριο diagnosis task</span>"}else{if(task.typ==="maintenance")return "<span class='tag diag'>Κατάλληλο για intervention day</span>";if(task.typ==="diagnosis_execution")return "<span class='tag intv'>Μπορεί να γίνει με έλεγχο</span>";return "<span class='tag block'>Υποχωρεί στο intervention mode</span>"}}
+function update(){if(!wx)return;let c=wx.current,s=sun(LOC[loc].lat,LOC[loc].lon,new Date()),wind=Math.round(c.wind_speed_10m||0),uv=+(c.uv_index||0).toFixed(1),temp=Math.round(c.temperature_2m||0),sl=slice(),stability=stabilityScore(c);let work="08:00–11:30",outdoor=uv>=7?`${s.gold}–${s.set}`:`10:00–12:00 / ${s.gold}–${s.set}`,photo=`${s.gold}–${s.set}`,garden=temp>=28||uv>=6?`${s.gold}–${s.set}`:`09:00–11:00 / ${s.gold}–${s.set}`,radio="Βραδινό ή ήρεμο απογευματινό παράθυρο";let dec=[],best=[],pp=[],alerts=[],summary=`${LOC[loc].label}: `;if(pri==='work'){dec.push("Κλείδωσε πρώτα μία σοβαρή ενότητα συγκεντρωμένης εργασίας.");dec.push(`Προστάτευσε το παράθυρο ${work} από άσχετες εξωτερικές κινήσεις.`);best=[["Εργασία",work,"Το βασικό μπλοκ της ημέρας."],["Έξοδος",outdoor,"Μετά τη δουλειά."],["Φωτογραφία",photo,"Αν θες μικρή αποσυμπίεση."],["Κηπουρική",garden,"Μόνο ως δεύτερη χρήση."]];summary+="πρώτα χρειάζεται συγκεντρωμένη εργασία και μετά οργανωμένη έξοδος."}else if(pri==='gardening'){dec.push("Η κηπουρική είναι καλύτερη σε ήπιο φως και όχι στο σκληρό μεσημέρι.");dec.push(`Το βασικό παράθυρο σήμερα είναι το ${garden}.`);best=[["Κηπουρική",garden,"Η σημερινή σου προτεραιότητα."],["Φωτογραφία",photo,"Αν είσαι ήδη έξω."],["Εργασία",work,"Μικρό πρωινό μπλοκ."],["Radio",radio,"Δευτερεύον σήμερα."]];summary+="η μέρα δουλεύει καλύτερα για κηπουρική αργότερα."}else if(pri==='radio'){dec.push("Ξεκίνα από 2m / repeater και κράτα το HF ως δεύτερο στάδιο.");dec.push(`Το πιο άνετο παράθυρο είναι: ${radio}.`);best=[["Radio",radio,"Η σημερινή κύρια χρήση."],["Εργασία",work,"Μικρό πρωινό μπλοκ."],["Φωτογραφία",photo,"Μόνο αν βγεις αργότερα."],["Έξοδος",outdoor,"Δευτερεύουσα προτεραιότητα."]];summary+="η μέρα σηκώνει ήπιο radio focus."}else if(pri==='photo'){dec.push("Στη φωτογραφία, η ώρα μετρά περισσότερο από την ποσότητα της ημέρας.");dec.push(`Φρόντισε να είσαι έτοιμος πριν από τη χρυσή ώρα ${s.gold}.`);best=[["Φωτογραφία",photo,"Το σημαντικότερο παράθυρο σήμερα."],["Έξοδος",outdoor,"Συνδυάζεται εύκολα."],["Εργασία",work,"Πρωινό κλειστό μπλοκ."],["Κηπουρική",garden,"Δευτερεύουσα επιλογή."]];summary+="η αξία της ημέρας είναι κυρίως στο σωστό φως."}else if(pri==='outdoor'){dec.push("Αν η μέρα είναι για έξοδο, σεβάσου πρώτα το φως και τον άνεμο.");dec.push(`Πιο ασφαλές και χρήσιμο παράθυρο: ${outdoor}.`);best=[["Έξοδος",outdoor,"Κύριο παράθυρο σήμερα."],["Φωτογραφία",photo,"Αν θέλεις καλύτερη εικόνα."],["Κηπουρική",garden,"Αν σε ωφελεί."],["Εργασία",work,"Σύντομο πρωινό τακτοποίημα."]];summary+="καλό πρακτικό παράθυρο για έξοδο υπάρχει."}else{dec.push("Κράτα τη μέρα απλή: πρώτα η βασική δουλειά ή ο βασικός σκοπός.");dec.push(`Το πιο χρήσιμο φυσικό παράθυρο παραμένει κοντά στη χρυσή ώρα ${s.gold}.`);best=[["Εργασία",work,"Για καθαρή πρωινή συγκέντρωση."],["Έξοδος",outdoor,"Για ήπια πρακτική χρήση."],["Φωτογραφία",photo,"Για καλύτερο φως."],["Κηπουρική",garden,"Αν τελικά κινηθείς έξω."]];summary+="η μέρα είναι ισορροπημένη."}let conf=null;if(proj==='w124'){let scored=scoreW124(wind,uv,temp,wmode),top=scored[0];conf=confidenceForTask(top,wind,uv,temp,wmode,stability);dec.unshift(`W124 ${wmode} candidate: ${top.t}. Αυτό είναι το πιο λογικό επόμενο βήμα με βάση το επιλεγμένο mode και τις σημερινές συνθήκες.`);best.unshift([`W124 top task (${wmode})`,top.t,`Εκτιμώμενος χρόνος: ${top.m}' • score ${top.s}`]);summary+=` Για το W124 (${wmode}), το πιο λογικό task σήμερα είναι: ${top.t}.`;document.getElementById('w124').innerHTML=scored.map(t=>`<div class='item'><strong>${t.t}</strong><br><span class='small mono'>score ${t.s} • ${t.m}' • risk ${t.r}/10</span><br><span class='small'>${t.n}</span><br>${modeTag(t,wmode)}</div>`).join('');document.getElementById('confidence').innerHTML=`<div class='meter'><div><strong>Top task:</strong> ${top.t}</div><div class='small'>Mode: ${wmode} • Confidence: <span class='conf-${conf.cls}'>${conf.label}</span> (${conf.value}/100)</div><div class='bar'><div class='fill ${conf.cls}' style='width:${conf.value}%'></div></div><div class='small' style='margin-top:8px'>${conf.advice}</div><div class='small'>Weather stability contribution: ${stability.label} (${stability.value}/100)</div></div>`}else{document.getElementById('w124').innerHTML="<div class='item'>Το W124 matrix ενεργοποιείται μόνο όταν το Project focus είναι <strong>W124 restoration</strong>.</div>";document.getElementById('confidence').innerHTML="<div class='meter'><div><strong>Confidence Meter</strong></div><div class='small'>Ενεργοποιείται πιο ουσιαστικά όταν υπάρχει συγκεκριμένο project focus, π.χ. W124 restoration.</div></div>"}document.getElementById('stability').innerHTML=`<div class='meter'><div><strong>Weather stability:</strong> <span class='conf-${stability.cls}'>${stability.label}</span> (${stability.value}/100)</div><div class='bar'><div class='fill ${stability.cls}' style='width:${stability.value}%'></div></div><div class='small' style='margin-top:8px'>${stability.text}</div></div>`;pp.push(`Προτεραιότητα: ${PRI.find(x=>x[0]===pri)?.[1]||"Καμία"}.`);pp.push(`Project focus: ${PROJ.find(x=>x[0]===proj)?.[1]||"Κανένα"}.`);if(proj==='w124')pp.push(`W124 mode: ${wmode}.`);if(wx._fallback)pp.push("Weather mode: fallback ενεργό.");if(conf)pp.push(`Task confidence: ${conf.label} (${conf.value}/100).`);pp.push(`Weather stability: ${stability.label} (${stability.value}/100).`);if(uv>=7)alerts.push(alertBox("Υψηλό UV — απόφυγε μεσημεριανή έκθεση χωρίς λόγο.","alertH"));else if(uv>=4)alerts.push(alertBox("Μέτριο UV — προτίμησε πιο ελεγχόμενες ώρες έξω.","alertM"));else alerts.push(alertBox("Το UV είναι ήπιο — δεν είναι η βασική πίεση της ημέρας.","alertL"));if(wind>=35)alerts.push(alertBox("Δυνατός άνεμος — κράτα πίσω δραστηριότητες που θέλουν σταθερότητα.","alertH"));else if(wind>=20)alerts.push(alertBox("Μέτριος άνεμος — θέλει κρίση, όχι βιαστική απόφαση.","alertM"));else alerts.push(alertBox("Ο άνεμος είναι φιλικός για τις περισσότερες κινήσεις.","alertL"));let cons=consistencyAnalysis();document.getElementById('consistency').innerHTML=cons.map(x=>`<div class='item ${x.cls}'>${x.text}</div>`).join('');let nowtxt=sl==='morning'?"Αυτή τη στιγμή ταιριάζει περισσότερο οργανωμένο πρωινό block, όχι διάσπαση.":sl==='midday'?(uv>=6?"Αυτή τη στιγμή είναι προτιμότερο να μείνεις σε εσωτερική ή ελεγχόμενη δραστηριότητα και να κρατήσεις την έξοδο για αργότερα.":"Αυτή τη στιγμή μπορείς να κάνεις σύντομη, ελεγχόμενη κίνηση, όχι όμως άσκοπη διασπορά."): `Αυτή τη στιγμή το παράθυρο πλησιάζει προς την πιο χρήσιμη απογευματινή φάση, ειδικά κοντά στις ${s.gold}.`;if(proj==='w124'){let top=scoreW124(wind,uv,temp,wmode)[0];nowtxt+=` Προσωρινή καλύτερη πρόταση για το W124 (${wmode}): ${top.t}.`;if(conf)nowtxt+=` Confidence: ${conf.label}.`;}nowtxt+=` Weather stability: ${stability.label}.`;if(wx._fallback)nowtxt+=" Ο καιρός δεν φορτώθηκε live, αλλά η λογική συνεχίζει με fallback.";document.getElementById('now').textContent=nowtxt;document.getElementById('dec').innerHTML=dec.map(x=>`<div class='item'>${x}</div>`).join('');document.getElementById('best').innerHTML=best.slice(0,4).map(x=>`<div><div class='small'>${x[0]}</div><div><strong>${x[1]}</strong></div><div class='small'>${x[2]}</div></div>`).join('');document.getElementById('alerts').innerHTML=alerts.join('');document.getElementById('pp').innerHTML=pp.map(x=>`<div class='item'>${x}</div>`).join('');document.getElementById('slices').innerHTML=`<div><div class='small'>Πρωί</div><div><strong>${pri==='work'?'Εργασία':proj==='w124'?'Έλεγχος / planning':'Συγκέντρωση'}</strong></div><div class='small'>Καλό για καθαρή εκκίνηση.</div></div><div><div class='small'>Μεσημέρι</div><div><strong>${uv>=6?'Προσοχή':'Ελεγχόμενη χρήση'}</strong></div><div class='small'>Απόφυγε βιαστικές κινήσεις.</div></div><div><div class='small'>Απόγευμα</div><div><strong>${pri==='photo'?'Φωτογραφία':pri==='gardening'?'Κηπουρική':'Καλό παράθυρο'}</strong></div><div class='small'>Συνήθως η καλύτερη πρακτική στιγμή.</div></div>`;document.getElementById('summary').textContent=summary}
 function tick(){let n=new Date();document.getElementById('date').textContent=n.toLocaleDateString('el-GR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('time').textContent=n.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'})}
 tick();renderButtons();fetchWx();setInterval(tick,60000);
 </script></body></html>
